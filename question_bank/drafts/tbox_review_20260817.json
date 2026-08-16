@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "evidence_scope": "tbox_generated_pending_human_teacher_review",
+  "generated_at": "2026-08-17",
+  "generator_app_id": "202608AP9YhY21462248",
+  "items": [
+    {
+      "id": "AIEVD2320229",
+      "dimension": "evaluation",
+      "difficulty": 2,
+      "type": "open_text",
+      "question": "在使用大语言模型生成一份市场调研报告草稿后，发现内容存在部分事实性错误和逻辑跳跃。请简述两个具体的评估步骤，用于识别并修正这些问题，以提升最终报告的质量。",
+      "options": [],
+      "answer": null,
+      "explanation": "评估AI生成内容需结合人工核查与交叉验证。常见错误包括盲目信任模型输出或仅关注格式而忽略内容真实性。正确的评估应包含事实核对和逻辑连贯性检查。",
+      "tags": ["结果评估", "事实核查", "质量优化"],
+      "ability_level": "L3",
+      "discrimination": 1.0,
+      "max_score": 20,
+      "rubric": [
+        "提出使用独立、可信的外部信源交叉验证关键事实",
+        "检查上下文逻辑连贯性以及因果关系是否成立",
+        "给出针对错误事实和逻辑跳跃的可执行修订步骤"
+      ],
+      "keywords": ["交叉验证", "事实核查", "逻辑连贯", "外部信源"],
+      "changed_by": "项目成员确认导入（2026-08-17）",
+      "review_status": "approved_for_formal_bank_by_project_member",
+      "source_model": "baibaoxiang:202608AP9YhY21462248"
+    }
+  ],
+  "rejected": [
+    {
+      "id": "AIEV8A36A1FE",
+      "reason": "将ROUGE-L召回率表述为最能直接反映关键事实遗漏，存在把词面覆盖与事实完整性等同的效度争议，未进入待审题库。"
+    }
+  ]
+}

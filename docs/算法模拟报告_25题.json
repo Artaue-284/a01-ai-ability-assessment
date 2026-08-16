@@ -1,0 +1,70 @@
+{
+  "runs_per_profile": 200,
+  "target_questions": 25,
+  "overall_classification_accuracy": 0.645,
+  "profiles": {
+    "L1": {
+      "runs": 200,
+      "mean_score": 23.9,
+      "score_sd": 6.1,
+      "mean_questions": 25,
+      "mean_difficulty": 1.48,
+      "classification_accuracy": 1.0,
+      "predicted_levels": {
+        "L1": 200
+      }
+    },
+    "L2": {
+      "runs": 200,
+      "mean_score": 53.4,
+      "score_sd": 6.2,
+      "mean_questions": 25,
+      "mean_difficulty": 1.72,
+      "classification_accuracy": 0.675,
+      "predicted_levels": {
+        "L2": 135,
+        "L1": 58,
+        "L3": 7
+      }
+    },
+    "L3": {
+      "runs": 200,
+      "mean_score": 67.1,
+      "score_sd": 6.9,
+      "mean_questions": 25,
+      "mean_difficulty": 1.88,
+      "classification_accuracy": 0.575,
+      "predicted_levels": {
+        "L2": 79,
+        "L3": 115,
+        "L4": 6
+      }
+    },
+    "L4": {
+      "runs": 200,
+      "mean_score": 81.6,
+      "score_sd": 5.4,
+      "mean_questions": 25,
+      "mean_difficulty": 2.03,
+      "classification_accuracy": 0.6,
+      "predicted_levels": {
+        "L3": 71,
+        "L4": 120,
+        "L5": 9
+      }
+    },
+    "L5": {
+      "runs": 200,
+      "mean_score": 88.2,
+      "score_sd": 4.9,
+      "mean_questions": 25,
+      "mean_difficulty": 2.12,
+      "classification_accuracy": 0.375,
+      "predicted_levels": {
+        "L4": 116,
+        "L5": 75,
+        "L3": 9
+      }
+    }
+  }
+}

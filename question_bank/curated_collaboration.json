@@ -1,0 +1,262 @@
+[
+  {
+    "id": "CO201",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "tags": [
+      "职责",
+      "目标"
+    ],
+    "question": "开始使用AI完成团队任务前，人首先应做什么？",
+    "options": [
+      "先把全部系统权限直接交给模型使用",
+      "先删除团队已经收集的全部参考资料",
+      "先跳过需求沟通并要求模型直接生成",
+      "先明确任务目标、人员责任和验收标准"
+    ],
+    "answer": "先明确任务目标、人员责任和验收标准",
+    "explanation": "清晰目标和责任边界是有效协作的起点。",
+    "answer_index": 3
+  },
+  {
+    "id": "CO202",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "tags": [
+      "人工判断",
+      "责任"
+    ],
+    "question": "AI给出建议后，最终责任通常由谁承担？",
+    "options": [
+      "作出并执行最终决定的个人或组织",
+      "提供建议的模型及其参数开发人员",
+      "提供网络连接服务的运营商和平台",
+      "任何人都不需要承担最终决策责任"
+    ],
+    "answer": "作出并执行最终决定的个人或组织",
+    "explanation": "AI输出不能替代实际决策主体的责任。",
+    "answer_index": 0
+  },
+  {
+    "id": "CO203",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "tags": [
+      "分工",
+      "优势"
+    ],
+    "question": "哪种人机分工更合理？",
+    "options": [
+      "AI负责全部工作并独立作出最终决定",
+      "AI负责整理生成，人负责判断和高风险决定",
+      "AI负责生成结果，人只负责复制和发布",
+      "人与AI均不检查结果便直接进入下一环节"
+    ],
+    "answer": "AI负责整理生成，人负责判断和高风险决定",
+    "explanation": "分工应发挥自动化优势并保留人的判断和责任。",
+    "answer_index": 1
+  },
+  {
+    "id": "CO204",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "tags": [
+      "反馈",
+      "迭代"
+    ],
+    "question": "AI初稿不符合要求时，最有效的反馈是什么？",
+    "options": [
+      "只告诉模型结果不好但不说明原因",
+      "原样重复上一轮提示并等待随机改进",
+      "指出具体问题并提供修改标准和示例",
+      "跳过质量检查并直接发布当前初稿"
+    ],
+    "answer": "指出具体问题并提供修改标准和示例",
+    "explanation": "具体、可执行的反馈有利于迭代。",
+    "answer_index": 2
+  },
+  {
+    "id": "CO205",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "tags": [
+      "记录",
+      "追溯"
+    ],
+    "question": "团队为什么要记录AI参与的关键步骤？",
+    "options": [
+      "用于向项目成员隐藏系统使用AI的事实",
+      "用于增加项目保存的文档和文件数量",
+      "便于取消流程中的全部人工审核环节",
+      "便于复核处理过程、追踪修改并界定责任"
+    ],
+    "answer": "便于复核处理过程、追踪修改并界定责任",
+    "explanation": "过程记录支持审计、复盘和责任管理。",
+    "answer_index": 3
+  },
+  {
+    "id": "CO206",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "tags": [
+      "任务拆解",
+      "调研"
+    ],
+    "question": "使用AI完成调研报告，哪种流程更合理？",
+    "options": [
+      "明确问题、分析资料、人工核验后形成结论",
+      "先生成最终结论再寻找能够支持的资料",
+      "将资料直接交给AI独立完成全部报告",
+      "只检查最终排版而不核对事实和来源"
+    ],
+    "answer": "明确问题、分析资料、人工核验后形成结论",
+    "explanation": "研究流程应先有问题和证据，再形成结论。",
+    "answer_index": 0
+  },
+  {
+    "id": "CO207",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "tags": [
+      "检查点",
+      "风险"
+    ],
+    "question": "复杂工作流中，哪些位置最需要人工检查点？",
+    "options": [
+      "在文档发生自动换行或分页操作之后",
+      "在高风险、对外发布和不可逆操作之前",
+      "在用户每次移动鼠标或切换页面之后",
+      "仅在整个项目已经结束并交付之后"
+    ],
+    "answer": "在高风险、对外发布和不可逆操作之前",
+    "explanation": "人工检查应优先覆盖影响大且难以撤销的节点。",
+    "answer_index": 1
+  },
+  {
+    "id": "CO208",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "tags": [
+      "低置信度",
+      "升级"
+    ],
+    "question": "AI对某案例给出低置信度结果时，应如何处理？",
+    "options": [
+      "直接提高结果分数并继续执行流程",
+      "隐藏置信度信息后向用户展示结果",
+      "补充信息或升级人工后再作出判断",
+      "从所有候选结果中随机选择一个答案"
+    ],
+    "answer": "补充信息或升级人工后再作出判断",
+    "explanation": "低置信度是触发补充证据或人工接管的信号。",
+    "answer_index": 2
+  },
+  {
+    "id": "CO209",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "tags": [
+      "团队规范",
+      "共享"
+    ],
+    "question": "多人共同使用AI写项目材料时，怎样保持一致？",
+    "options": [
+      "允许每名成员采用完全不同的写作标准",
+      "只保留最后一名成员提交的文档版本",
+      "删除引用来源和历次人工修改记录",
+      "共享模板、术语规范、来源规则和审校流程"
+    ],
+    "answer": "共享模板、术语规范、来源规则和审校流程",
+    "explanation": "团队规范可减少风格、事实和责任的不一致。",
+    "answer_index": 3
+  },
+  {
+    "id": "CO210",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "tags": [
+      "复盘",
+      "改进"
+    ],
+    "question": "项目结束后复盘AI协作，最应该记录什么？",
+    "options": [
+      "记录有效环节、失败类型和人工修改原因",
+      "只记录使用AI后节省的时间和费用",
+      "只保留成功案例并删除全部失败记录",
+      "删除错误记录以保证项目报告更加整洁"
+    ],
+    "answer": "记录有效环节、失败类型和人工修改原因",
+    "explanation": "复盘需要同时观察收益、失败和人工成本。",
+    "answer_index": 0
+  },
+  {
+    "id": "CO211",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "tags": [
+      "责任矩阵",
+      "治理"
+    ],
+    "question": "跨部门AI流程容易出现责任不清，最合适的改进是什么？",
+    "options": [
+      "让模型根据每次输出结果自行分配责任",
+      "为各环节建立明确的责任分配矩阵",
+      "取消全部操作日志以简化协作流程",
+      "让所有部门共同负责但不指定负责人"
+    ],
+    "answer": "为各环节建立明确的责任分配矩阵",
+    "explanation": "责任矩阵明确谁执行、审核、批准和处理异常。",
+    "answer_index": 1
+  },
+  {
+    "id": "CO212",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "tags": [
+      "规模化",
+      "质量门槛"
+    ],
+    "question": "将AI试点扩大到全校前，哪项条件最重要？",
+    "options": [
+      "只要试点曾经成功一次便立即全面推广",
+      "只要宣传材料制作完成便立即全面推广",
+      "明确适用范围、质量门槛和异常升级机制",
+      "取消人工支持并让系统独立处理异常"
+    ],
+    "answer": "明确适用范围、质量门槛和异常升级机制",
+    "explanation": "规模化需要稳定流程和可监测的风险控制。",
+    "answer_index": 2
+  },
+  {
+    "id": "CO213",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "tags": [
+      "反馈闭环",
+      "组织"
+    ],
+    "question": "怎样让人工修改持续改善AI协作系统？",
+    "options": [
+      "直接覆盖原有结果且不保留修改记录",
+      "只统计系统调用次数而不分析修改内容",
+      "减少员工反馈以保持现有流程稳定",
+      "记录修改原因并定期更新提示、规则或题库"
+    ],
+    "answer": "记录修改原因并定期更新提示、规则或题库",
+    "explanation": "高质量反馈数据是持续改进的重要输入。",
+    "answer_index": 3
+  }
+]

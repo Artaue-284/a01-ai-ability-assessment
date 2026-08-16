@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-08-17",
+  "version": "synthetic-calibration-20260817-v1",
+  "method": "supervised_cutpoint_search_with_non_equal_width_and_count_constraints",
+  "evidence_scope": "synthetic_balanced_cohort",
+  "sample_size": 100,
+  "thresholds": [34.5, 49.7, 65.9, 80.8],
+  "intervals": [
+    {"level": "L1", "lower": 0.0, "upper_exclusive": 34.5, "width": 34.5, "count": 20},
+    {"level": "L2", "lower": 34.5, "upper_exclusive": 49.7, "width": 15.2, "count": 19},
+    {"level": "L3", "lower": 49.7, "upper_exclusive": 65.9, "width": 16.2, "count": 21},
+    {"level": "L4", "lower": 65.9, "upper_exclusive": 80.8, "width": 14.9, "count": 26},
+    {"level": "L5", "lower": 80.8, "upper_inclusive": 100.0, "width": 19.2, "count": 14}
+  ],
+  "accuracy": 0.81,
+  "legacy_thresholds": [50.0, 65.0, 80.0, 90.0],
+  "legacy_accuracy": 0.31,
+  "confusion": {
+    "L1": {"L1": 18, "L2": 2},
+    "L2": {"L1": 2, "L2": 17, "L3": 1},
+    "L3": {"L3": 18, "L4": 2},
+    "L4": {"L3": 2, "L4": 16, "L5": 2},
+    "L5": {"L4": 8, "L5": 12}
+  },
+  "constraints": {
+    "pairwise_distinct_interval_widths": true,
+    "pairwise_distinct_level_counts": true,
+    "minimum_level_count": 10,
+    "maximum_level_count": 35
+  },
+  "disclaimer": "阈值由100份仿真人工答题样本校准，用于竞赛原型和模拟验证，不代表真人常模。"
+}

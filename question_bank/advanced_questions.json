@@ -1,0 +1,140 @@
+[
+  {
+    "id": "BA101",
+    "dimension": "basic",
+    "difficulty": 3,
+    "ability_level": "L4",
+    "type": "single_choice",
+    "tags": [
+      "上下文窗口",
+      "模型边界"
+    ],
+    "question": "某长文档问答系统在文档超过上下文窗口后频繁遗漏前半部分信息，最合理的改进方案是什么？",
+    "options": [
+      "分块检索相关内容并基于来源片段回答",
+      "提高提示词语气强度并反复要求完整回答",
+      "对同一问题多次生成后选择最长的回答",
+      "将整篇文档转为图片后一次性提交识别"
+    ],
+    "answer": "分块检索相关内容并基于来源片段回答",
+    "answer_index": 0,
+    "max_score": 10,
+    "discrimination": 1.3,
+    "explanation": "上下文容量有限时，应通过检索和分块控制输入，并保留证据来源。"
+  },
+  {
+    "id": "PR101",
+    "dimension": "prompt",
+    "difficulty": 3,
+    "ability_level": "L4",
+    "type": "single_choice",
+    "tags": [
+      "提示模板",
+      "稳定性"
+    ],
+    "question": "一个提示词在不同批次合同摘要中输出字段经常缺失，优先采用哪种优化？",
+    "options": [
+      "增加提示中的形容词并要求模型认真回答",
+      "定义字段、缺失值和示例，并使用测试集回归",
+      "删除全部输出格式要求并允许自由生成",
+      "固定要求模型输出更长且更详细的文本"
+    ],
+    "answer": "定义字段、缺失值和示例，并使用测试集回归",
+    "answer_index": 1,
+    "max_score": 10,
+    "discrimination": 1.4,
+    "explanation": "复杂提示需要明确输出契约，并通过代表性测试集验证稳定性。"
+  },
+  {
+    "id": "TO101",
+    "dimension": "tools",
+    "difficulty": 3,
+    "ability_level": "L4",
+    "type": "single_choice",
+    "tags": [
+      "工具链",
+      "权限"
+    ],
+    "question": "设计自动生成并发送经营日报的AI工作流时，哪种方案最稳妥？",
+    "options": [
+      "直接向模型开放数据库和邮箱管理员权限",
+      "关闭全部运行日志以减少工作流处理时间",
+      "分阶段执行并设置最小权限、校验和人工确认",
+      "模型生成日报后无需检查便立即发送"
+    ],
+    "answer": "分阶段执行并设置最小权限、校验和人工确认",
+    "answer_index": 2,
+    "max_score": 10,
+    "discrimination": 1.4,
+    "explanation": "高影响工作流应拆分权限和阶段，保留校验、确认与审计。"
+  },
+  {
+    "id": "EV101",
+    "dimension": "evaluation",
+    "difficulty": 3,
+    "ability_level": "L4",
+    "type": "single_choice",
+    "tags": [
+      "评分一致性",
+      "验证集"
+    ],
+    "question": "要证明开放题模型评分可信，最有说服力的验证方式是什么？",
+    "options": [
+      "展示少量模型评分较高的开放题回答",
+      "只报告模型对全部回答给出的平均分",
+      "让模型自行说明其评分结果足够准确",
+      "比较模型与独立人工盲评的一致性及分歧"
+    ],
+    "answer": "比较模型与独立人工盲评的一致性及分歧",
+    "answer_index": 3,
+    "max_score": 10,
+    "discrimination": 1.5,
+    "explanation": "盲评、一致性指标和分歧分析可以检验评分效度及可靠性。"
+  },
+  {
+    "id": "CO101",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "ability_level": "L4",
+    "type": "single_choice",
+    "tags": [
+      "异常处理",
+      "人工升级"
+    ],
+    "question": "在AI辅助处理客户投诉的流程中，哪种人机协作设计更成熟？",
+    "options": [
+      "按风险分级处理并由人工接管高风险案件",
+      "让系统自动答复全部投诉并直接结束流程",
+      "按照投诉中关键词的数量决定处理优先级",
+      "让人工处理全部投诉但不记录处理原因"
+    ],
+    "answer": "按风险分级处理并由人工接管高风险案件",
+    "answer_index": 0,
+    "max_score": 10,
+    "discrimination": 1.4,
+    "explanation": "成熟协作流程需要风险分级、置信度门槛、人工升级和反馈闭环。"
+  },
+  {
+    "id": "ET101",
+    "dimension": "ethics",
+    "difficulty": 3,
+    "ability_level": "L4",
+    "type": "single_choice",
+    "tags": [
+      "治理",
+      "审计"
+    ],
+    "question": "学校使用AI能力画像辅助实习推荐时，哪项治理组合最完整？",
+    "options": [
+      "只优化推荐点击率而不检查群体影响",
+      "取得授权、限制用途、监测偏差并提供申诉",
+      "公开学生原始记录以便企业自行判断",
+      "永久保存全部数据以支持未来其他用途"
+    ],
+    "answer": "取得授权、限制用途、监测偏差并提供申诉",
+    "answer_index": 1,
+    "max_score": 10,
+    "discrimination": 1.5,
+    "explanation": "高影响教育推荐需要目的限制、权限、公平性监测、申诉和审计。"
+  }
+]

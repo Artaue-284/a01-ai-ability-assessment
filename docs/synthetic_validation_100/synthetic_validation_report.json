@@ -1,0 +1,119 @@
+{
+  "generated_at": "2026-08-16T09:12:30.573132+00:00",
+  "seed": 20260816,
+  "evidence_scope": "synthetic_balanced_cohort",
+  "disclaimer": "100份样本均为程序生成的仿真人工答题，不是真实学生数据；双评由两名独立模拟教师评分器完成，不替代真实教师签字与现场效度验证。",
+  "design": {
+    "levels": [
+      "L1",
+      "L2",
+      "L3",
+      "L4",
+      "L5"
+    ],
+    "samples_per_level": 20,
+    "total_samples": 100,
+    "target_questions": 25,
+    "distribution": {
+      "L1": 20,
+      "L2": 20,
+      "L3": 20,
+      "L4": 20,
+      "L5": 20
+    },
+    "maximum_level_share": 0.2,
+    "background_count": 10,
+    "individual_variation": [
+      "六维强弱项",
+      "专业背景",
+      "答题速度",
+      "粗心率",
+      "开放题表达与覆盖率"
+    ]
+  },
+  "assessment_results": {
+    "completion_rate": 1.0,
+    "overall_classification_accuracy": 0.31,
+    "latent_observed_pearson": 0.946,
+    "mean_score": 57.02,
+    "mean_minutes": 31.1,
+    "levels": {
+      "L1": {
+        "sample_size": 20,
+        "mean_score": 28.54,
+        "score_sd": 5.16,
+        "mean_minutes": 33.08,
+        "classification_accuracy": 1.0,
+        "predicted_levels": {
+          "L1": 20
+        }
+      },
+      "L2": {
+        "sample_size": 20,
+        "mean_score": 42.35,
+        "score_sd": 5.33,
+        "mean_minutes": 32.75,
+        "classification_accuracy": 0.05,
+        "predicted_levels": {
+          "L1": 19,
+          "L2": 1
+        }
+      },
+      "L3": {
+        "sample_size": 20,
+        "mean_score": 59.94,
+        "score_sd": 7.03,
+        "mean_minutes": 30.76,
+        "classification_accuracy": 0.15,
+        "predicted_levels": {
+          "L2": 17,
+          "L3": 3
+        }
+      },
+      "L4": {
+        "sample_size": 20,
+        "mean_score": 72.47,
+        "score_sd": 7.04,
+        "mean_minutes": 29.76,
+        "classification_accuracy": 0.2,
+        "predicted_levels": {
+          "L2": 1,
+          "L4": 4,
+          "L3": 15
+        }
+      },
+      "L5": {
+        "sample_size": 20,
+        "mean_score": 81.78,
+        "score_sd": 7.75,
+        "mean_minutes": 29.16,
+        "classification_accuracy": 0.15,
+        "predicted_levels": {
+          "L5": 3,
+          "L3": 8,
+          "L4": 9
+        }
+      }
+    }
+  },
+  "double_review": {
+    "reviewed_answers": 200,
+    "double_reviewed_answers": 200,
+    "model_human_pearson": 0.932,
+    "inter_rater_pearson": 0.927,
+    "quadratic_weighted_kappa": 0.861,
+    "major_disagreements": 14,
+    "note": "双评样本已达到30份，可用于一致性过程统计；仍需结合真实教师样本解释。",
+    "reviewer_type": "two_independent_simulated_teacher_raters",
+    "review_records": 400,
+    "resolved_disagreements": 14,
+    "major_disagreement_threshold": 0.2
+  },
+  "artifacts": {
+    "database": "synthetic_validation.db",
+    "respondents_csv": "synthetic_respondents.csv",
+    "answers_csv": "synthetic_answers.csv",
+    "reviews_csv": "synthetic_teacher_reviews.csv",
+    "resolutions_csv": "synthetic_review_resolutions.csv"
+  }
+}

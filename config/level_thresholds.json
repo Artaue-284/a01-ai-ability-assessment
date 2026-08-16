@@ -1,0 +1,23 @@
+{
+  "version": "synthetic-calibration-20260817-v1",
+  "method": "supervised_cutpoint_search_with_non_equal_width_and_count_constraints",
+  "evidence_scope": "synthetic_balanced_cohort",
+  "sample_size": 100,
+  "thresholds": [34.5, 49.7, 65.9, 80.8],
+  "levels": [
+    {"code": "L1", "name": "入门", "lower": 0.0, "upper": 34.5, "width": 34.5, "calibration_count": 20},
+    {"code": "L2", "name": "基础", "lower": 34.5, "upper": 49.7, "width": 15.2, "calibration_count": 19},
+    {"code": "L3", "name": "熟练", "lower": 49.7, "upper": 65.9, "width": 16.2, "calibration_count": 21},
+    {"code": "L4", "name": "高级", "lower": 65.9, "upper": 80.8, "width": 14.9, "calibration_count": 26},
+    {"code": "L5", "name": "专家", "lower": 80.8, "upper": 100.0, "width": 19.2, "calibration_count": 14}
+  ],
+  "accuracy": 0.81,
+  "legacy_accuracy": 0.31,
+  "constraints": {
+    "pairwise_distinct_interval_widths": true,
+    "pairwise_distinct_level_counts": true,
+    "minimum_level_count": 10,
+    "maximum_level_count": 35
+  },
+  "disclaimer": "阈值由100份仿真人工答题样本校准，用于竞赛原型和模拟验证，不代表真人常模。"
+}
