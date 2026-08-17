@@ -5,10 +5,58 @@ import random
 from collections import Counter
 from typing import Any
 
-from algorithm.level_scale import score_to_level_name
-
 
 DIMENSIONS = ("basic", "prompt", "tools", "evaluation", "collaboration", "ethics")
+
+# 每场测评末尾固定追加的主观题型：开放作答 + 实操任务 + 对话式任务。
+# 题库含代码/图像题型时，可在题库管理后台扩展；引擎按可用性自动回退。
+TAIL_TYPES = (("open_text", 2), ("practical", 3), ("dialogue", 3))
+
+# 训练资源：用于在报告中给出可落地的学习与练习建议。
+TRAINING_RESOURCES = {
+    "basic": {
+        "name": "AI 基础认知",
+        "resources": [
+            {"title": "《AI 速览：大模型基础概念》", "url": "https://www.promptingguide.ai/zh", "practice": "用 3 句话向同学解释什么是大模型幻觉"},
+            {"title": "AI 伦理与安全入门", "url": "https://www.aicourse.com/zh/ai-ethics", "practice": "列出 5 个不得上传给公共 AI 的数据类型"},
+        ],
+    },
+    "prompt": {
+        "name": "提示词工程",
+        "resources": [
+            {"title": "Prompt Engineering Guide（中文）", "url": "https://www.promptingguide.ai/zh", "practice": "为同一任务写 3 版提示词并对比输出质量"},
+            {"title": "提示词模式库", "url": "https://learnprompting.org/zh-Hans/", "practice": "用少样本示例让 AI 按固定格式输出"},
+        ],
+    },
+    "tools": {
+        "name": "AI 工具使用",
+        "resources": [
+            {"title": "办公 AI 插件与数据分析工具清单", "url": "https://www.aicourse.com/zh/ai-tools", "practice": "用 AI 辅助完成一次 Excel/CSV 数据清洗"},
+            {"title": "代码生成工具实战", "url": "https://docs.github.com/zh/copilot", "practice": "让 AI 生成一段脚本并人工核验结果"},
+        ],
+    },
+    "evaluation": {
+        "name": "结果评估与优化",
+        "resources": [
+            {"title": "事实核验与 AI 幻觉识别练习", "url": "https://www.promptingguide.ai/zh/risks", "practice": "对 AI 回答做一次多来源交叉验证并写核验记录"},
+            {"title": "评测集与迭代方法", "url": "https://learnprompting.org/zh-Hans/", "practice": "建立 5 条用例的小评测集，比较两版提示词"},
+        ],
+    },
+    "collaboration": {
+        "name": "人机协同",
+        "resources": [
+            {"title": "人机协作工作流设计案例", "url": "https://www.aicourse.com/zh/collaboration", "practice": "把本周一个任务拆成人机分工并设置检查点"},
+            {"title": "AI 项目管理实践", "url": "https://www.aicourse.com/zh/ai-project", "practice": "为你的方案补上异常处理与人工升级路径"},
+        ],
+    },
+    "ethics": {
+        "name": "伦理与合规",
+        "resources": [
+            {"title": "数据合规与隐私保护指南", "url": "https://www.aicourse.com/zh/privacy", "practice": "对一份含个人信息的数据做脱敏方案"},
+            {"title": "生成内容负责任使用规范", "url": "https://www.aicourse.com/zh/ai-ethics", "practice": "为 AI 生成内容标注来源与复核责任"},
+        ],
+    },
+}
 
 
 class AdaptiveTestEngine:
@@ -93,20 +141,27 @@ class AdaptiveTestEngine:
     def _prepare_adaptive_stage(self, excluded: set[str]) -> None:
         slots = self.state["question_slots"]
         target = self.state["target_questions"]
-        objective_count = target - 2
+        objective_count = target - len(TAIL_TYPES)
         ranked_dimensions = sorted(DIMENSIONS, key=lambda key: (self.confidence(key), self.state["scores"][key]))
         while len(slots) < objective_count:
             dimension = ranked_dimensions[(len(slots) - 12) % len(ranked_dimensions)]
             question_id = self._select_candidate(excluded, dimension, "single_choice", self._target_difficulty(dimension))
             slots.append(question_id)
             excluded.add(question_id)
-        for question_type, difficulty in (("open_text", 2), ("practical", 3)):
+        for question_type, difficulty in TAIL_TYPES:
             if len(slots) >= target:
                 break
             dimension = ranked_dimensions[(len(slots) - objective_count) % len(ranked_dimensions)]
-            question_id = self._select_candidate(excluded, dimension, question_type, difficulty)
+            question_id = self._select_tail_question(excluded, dimension, question_type, difficulty)
             slots.append(question_id)
             excluded.add(question_id)
+
+    def _select_tail_question(self, excluded: set[str], dimension: str, question_type: str, difficulty: int) -> str:
+        """选择末段主观题；题库缺少目标题型时自动回退到开放题或实操题。"""
+        if any(q["id"] not in excluded and q["type"] == question_type for q in self.questions):
+            return self._select_candidate(excluded, dimension, question_type, difficulty)
+        fallback_type = "practical" if question_type == "dialogue" else "open_text"
+        return self._select_candidate(excluded, dimension, fallback_type, difficulty)
 
     def select_question(self, slot_number: int) -> dict:
         self._ensure_question_slots()
@@ -242,6 +297,11 @@ class AdaptiveTestEngine:
             "evaluation": "结果评估与优化", "collaboration": "人机协同", "ethics": "伦理与合规",
         }
         suggestions = [f"优先强化{name}：结合本次错题完成一次针对性练习。" for name in map(names.get, weaknesses)]
+        training = []
+        for key in weaknesses:
+            entry = TRAINING_RESOURCES.get(key)
+            if entry:
+                training.append({"dimension": key, "name": entry["name"], "resources": entry["resources"]})
         return {
             "overall_score": overall,
             "level": self._level(overall),
@@ -250,6 +310,7 @@ class AdaptiveTestEngine:
             "strengths": [key for key in ordered if scores[key] >= 75],
             "weaknesses": weaknesses,
             "suggestions": suggestions,
+            "training_resources": training,
             "evidence": self.state["history"],
             "question_count": len(self.state["used_ids"]),
             "type_distribution": dict(Counter(item["question_type"] for item in self.state["history"])),
@@ -258,4 +319,8 @@ class AdaptiveTestEngine:
 
     @staticmethod
     def _level(score: float) -> str:
-        return score_to_level_name(score)
+        if score >= 90: return "L5 专家"
+        if score >= 80: return "L4 高级"
+        if score >= 65: return "L3 熟练"
+        if score >= 50: return "L2 基础"
+        return "L1 入门"

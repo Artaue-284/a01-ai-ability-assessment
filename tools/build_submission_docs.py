@@ -16,9 +16,8 @@ from docx.shared import Inches, Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "提交材料"
+OUT = ROOT / "提交材料（序号1和2·黑白版）"
 ASSETS = OUT / "assets"
-SYNTHETIC_REPORT = ROOT / "docs" / "synthetic_validation_100" / "synthetic_validation_report.json"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -56,7 +55,7 @@ def set_cell_shading(cell, fill: str) -> None:
     shd.set(qn("w:fill"), fill)
 
 
-def set_cell_margins(cell, top=80, start=120, bottom=80, end=120) -> None:
+def set_cell_margins(cell, top=90, start=100, bottom=90, end=100) -> None:
     tc = cell._tc
     tc_pr = tc.get_or_add_tcPr()
     tc_mar = tc_pr.first_child_found_in("w:tcMar")
@@ -73,7 +72,7 @@ def set_cell_margins(cell, top=80, start=120, bottom=80, end=120) -> None:
 
 
 def set_table_geometry(table, widths: list[float]) -> None:
-    table.alignment = WD_TABLE_ALIGNMENT.LEFT
+    table.alignment = WD_TABLE_ALIGNMENT.CENTER
     table.autofit = False
     tbl_pr = table._tbl.tblPr
     layout = tbl_pr.find(qn("w:tblLayout"))
@@ -88,12 +87,6 @@ def set_table_geometry(table, widths: list[float]) -> None:
         tbl_pr.append(tbl_w)
     tbl_w.set(qn("w:w"), str(total))
     tbl_w.set(qn("w:type"), "dxa")
-    tbl_ind = tbl_pr.find(qn("w:tblInd"))
-    if tbl_ind is None:
-        tbl_ind = OxmlElement("w:tblInd")
-        tbl_pr.append(tbl_ind)
-    tbl_ind.set(qn("w:w"), "120")
-    tbl_ind.set(qn("w:type"), "dxa")
     grid = table._tbl.tblGrid
     for child in list(grid):
         grid.remove(child)
@@ -103,10 +96,6 @@ def set_table_geometry(table, widths: list[float]) -> None:
         grid.append(col)
     for row in table.rows:
         row.height_rule = WD_ROW_HEIGHT_RULE.AT_LEAST
-        tr_pr = row._tr.get_or_add_trPr()
-        cant_split = tr_pr.find(qn("w:cantSplit"))
-        if cant_split is None:
-            tr_pr.append(OxmlElement("w:cantSplit"))
         for idx, cell in enumerate(row.cells):
             cell.width = Inches(widths[idx])
             tc_pr = cell._tc.get_or_add_tcPr()
@@ -174,8 +163,8 @@ def configure_document(doc: Document, short_title: str) -> None:
     section.bottom_margin = Inches(1)
     section.left_margin = Inches(1)
     section.right_margin = Inches(1)
-    section.header_distance = Inches(0.492)
-    section.footer_distance = Inches(0.492)
+    section.header_distance = Inches(0.35)
+    section.footer_distance = Inches(0.35)
 
     styles = doc.styles
     normal = styles["Normal"]
@@ -183,16 +172,15 @@ def configure_document(doc: Document, short_title: str) -> None:
     normal._element.rPr.rFonts.set(qn("w:eastAsia"), "Microsoft YaHei")
     normal.font.size = Pt(11)
     normal.font.color.rgb = rgb(DARK)
-    normal.paragraph_format.space_before = Pt(0)
-    normal.paragraph_format.space_after = Pt(6)
-    normal.paragraph_format.line_spacing = 1.25
+    normal.paragraph_format.space_after = Pt(7)
+    normal.paragraph_format.line_spacing = 1.16
 
     for name, size, color, before, after in (
         ("Title", 30, PRIMARY, 0, 18),
         ("Subtitle", 13, MUTED, 0, 12),
-        ("Heading 1", 16, SECONDARY, 18, 10),
-        ("Heading 2", 13, PRIMARY, 14, 7),
-        ("Heading 3", 12, SECONDARY, 10, 5),
+        ("Heading 1", 18, SECONDARY, 18, 8),
+        ("Heading 2", 14, PRIMARY, 12, 5),
+        ("Heading 3", 11, SECONDARY, 9, 3),
     ):
         style = styles[name]
         style.font.name = "Calibri"
@@ -208,11 +196,9 @@ def configure_document(doc: Document, short_title: str) -> None:
         style = styles[list_style]
         style.font.name = "Calibri"
         style._element.rPr.rFonts.set(qn("w:eastAsia"), "Microsoft YaHei")
-        style.font.size = Pt(11)
-        style.paragraph_format.left_indent = Inches(0.375)
-        style.paragraph_format.first_line_indent = Inches(-0.188)
+        style.font.size = Pt(10.5)
         style.paragraph_format.space_after = Pt(4)
-        style.paragraph_format.line_spacing = 1.25
+        style.paragraph_format.line_spacing = 1.12
 
     header = section.header
     p = header.paragraphs[0]
@@ -255,7 +241,7 @@ def add_cover(doc: Document, title: str, subtitle: str, doc_no: str, status: str
         ("项目名称", "AI 能力测评智能体"),
         ("赛题方向", "人工智能教育评价、技能测评与学习路径规划"),
         ("文档状态", status),
-        ("版本日期", "2026年8月16日"),
+        ("版本日期", "2026年8月14日"),
     ]
     for i, (k, v) in enumerate(metadata):
         meta.cell(i, 0).text = k
@@ -273,7 +259,7 @@ def add_cover(doc: Document, title: str, subtitle: str, doc_no: str, status: str
     p = note.cell(0, 0).paragraphs[0]
     r = p.add_run("范围说明  ")
     set_run_font(r, bold=True, color=PRIMARY)
-    r = p.add_run("本文基于当前可运行版本撰写。百宝箱双智能体已发布并通过真实接口验证；真实学员效度、教师双评和生产级身份体系仍按未完成或部分完成标注。")
+    r = p.add_run("本文基于当前可运行版本撰写。百宝箱相关能力在取得正式接口与 Token 后接入；未完成的真实学员效度验证不表述为既有成果。")
     set_run_font(r, size=9.5, color=DARK)
     doc.add_page_break()
 
@@ -305,28 +291,8 @@ def add_bullets(doc: Document, items: list[str]) -> None:
 
 
 def add_numbers(doc: Document, items: list[str]) -> None:
-    numbering = doc.part.numbering_part.element
-    style_num_id = doc.styles["List Number"]._element.pPr.numPr.numId.val
-    base_num = next(node for node in numbering.findall(qn("w:num")) if int(node.get(qn("w:numId"))) == int(style_num_id))
-    abstract_num_id = base_num.find(qn("w:abstractNumId")).get(qn("w:val"))
-    next_num_id = max(int(node.get(qn("w:numId"))) for node in numbering.findall(qn("w:num"))) + 1
-    num = OxmlElement("w:num")
-    num.set(qn("w:numId"), str(next_num_id))
-    abstract = OxmlElement("w:abstractNumId")
-    abstract.set(qn("w:val"), abstract_num_id)
-    num.append(abstract)
-    override = OxmlElement("w:lvlOverride")
-    override.set(qn("w:ilvl"), "0")
-    start = OxmlElement("w:startOverride")
-    start.set(qn("w:val"), "1")
-    override.append(start)
-    num.append(override)
-    numbering.append(num)
     for item in items:
         p = doc.add_paragraph(style="List Number")
-        num_pr = p._p.get_or_add_pPr().get_or_add_numPr()
-        num_pr.get_or_add_ilvl().val = 0
-        num_pr.get_or_add_numId().val = next_num_id
         p.add_run(item)
 
 
@@ -450,7 +416,7 @@ def add_word_ui_wireframe(doc: Document) -> None:
                 for j, run in enumerate(p.runs):
                     set_run_font(run, size=8.6, bold=j == 0, color=DARK)
             set_cell_border(current, top={"val": "single", "sz": "6", "color": "7F7F7F"}, left={"val": "single", "sz": "6", "color": "7F7F7F"}, bottom={"val": "single", "sz": "6", "color": "7F7F7F"}, right={"val": "single", "sz": "6", "color": "7F7F7F"})
-    p = doc.add_paragraph("图 3  用户交互线框原型（Word表格绘制，可编辑）")
+    p = doc.add_paragraph("图 2  用户交互线框原型（Word表格绘制，可编辑）")
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     for run in p.runs:
         set_run_font(run, size=8.5, color=DARK)
@@ -458,14 +424,14 @@ def add_word_ui_wireframe(doc: Document) -> None:
 
 def add_word_architecture(doc: Document) -> None:
     rows = [
-        ("角色交互层", "学生：测评/成长/授权匹配", "教师：题库/复核/教学分析", "企业：岗位模板/匿名洞察"),
+        ("交互层", "学员测评 Web", "能力报告 / 成长档案", "教师管理 / 人工复核"),
         ("↓", "↓", "↓", "↓"),
-        ("权限与接口层", "学生会话 UUID", "X-Admin-Key 教师权限", "X-Enterprise-Key 企业权限"),
+        ("接口层", "FastAPI REST API", "鉴权与输入校验", "CSV / JSON 导入导出"),
         ("↓", "↓", "↓", "↓"),
-        ("领域服务层", "自适应测评与报告", "百宝箱评分/过程证据/人工复核", "岗位模板与隐私阈值聚合"),
+        ("领域服务层", "自适应测评引擎", "评分适配器", "报告与统计服务"),
         ("↓", "↓", "↓", "↓"),
-        ("数据层", "SQLite 业务记录", "90题种子与版本", "对话/证据/授权/岗位模板"),
-        ("外部智能体", "百宝箱评分智能体（已发布）", "题库教研智能体（已发布）", "异常降级 / 人工复核"),
+        ("数据层", "SQLite 当前存储", "题库 JSON 种子", "版本与审计记录"),
+        ("外部模型", "Responses API 兼容适配器", "百宝箱待 Token 接入", "超时降级 / 人工复核"),
     ]
     table = doc.add_table(rows=len(rows), cols=4)
     set_table_geometry(table, [1.05, 1.82, 1.82, 1.81])
@@ -481,7 +447,7 @@ def add_word_architecture(doc: Document) -> None:
                 set_cell_border(cell, top={"val": "nil"}, left={"val": "nil"}, bottom={"val": "nil"}, right={"val": "nil"})
             for run in cell.paragraphs[0].runs:
                 set_run_font(run, size=8.5 if i not in (1, 3, 5) else 11, bold=i in (0, 2, 4, 6, 7), color=DARK)
-    p = doc.add_paragraph("图 1  一套平台、三类业务角色的当前系统架构（Word表格绘制，可编辑）")
+    p = doc.add_paragraph("图 1  当前系统分层架构与百宝箱接入位置（Word表格绘制，可编辑）")
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     for run in p.runs:
         set_run_font(run, size=8.5, color=DARK)
@@ -490,9 +456,9 @@ def add_word_architecture(doc: Document) -> None:
 def add_word_data_model(doc: Document) -> None:
     rows = [
         ["users\n学员/班级", "1 → N", "tests\n测评会话/引擎状态", "1 → N", "answers\n作答/得分/用时"],
-        ["job_match_consents\n个人授权", "", "dialogue_turns\n过程引导", "", "evidence_files\n文件摘要/路径"],
+        ["", "", "↓ 0..1", "", "↓"],
         ["test_feedback\n体验与歧义反馈", "", "question_items\n题目当前版本", "1 → N", "question_versions\n历史版本/操作"],
-        ["job_templates\n岗位权重/门槛", "", "题目ID → answers", "", "human_reviews / review_resolutions\n双评与争议裁决"],
+        ["", "", "题目ID → answers", "", "human_reviews / review_resolutions\n双评与争议裁决"],
     ]
     table = doc.add_table(rows=4, cols=5)
     set_table_geometry(table, [1.42, 0.55, 1.65, 0.55, 2.33])
@@ -710,7 +676,7 @@ def save_roadmap_diagram(path: Path) -> None:
     d = ImageDraw.Draw(img)
     d.text((80, 40), "产品演进路线图", font=font(42, True), fill="#24364B")
     stages = [
-        ("提交前", "稳定与证据", ["真实学员预测试", "教师双评与校准", "百宝箱真实样本评分"]),
+        ("提交前", "稳定与证据", ["真实学员预测试", "教师双评与校准", "百宝箱接入验证"]),
         ("0–3个月", "课程试点", ["题库扩容与质检", "学习资源映射", "教师班级诊断"]),
         ("3–6个月", "平台化", ["PostgreSQL / 多租户", "统一身份与 LMS", "机构级运营看板"]),
         ("6–12个月", "生态化", ["岗位 / 证书标准", "测学练评闭环", "开放能力与数据接口"]),
@@ -732,45 +698,6 @@ def save_roadmap_diagram(path: Path) -> None:
     img.save(path)
 
 
-def save_validation_chart(path: Path, report: dict) -> None:
-    img = Image.new("RGB", (1800, 940), "#FFFFFF")
-    d = ImageDraw.Draw(img)
-    d.text((80, 48), "100份分层仿真与模拟教师双评摘要", font=font(44, True), fill="#111111")
-    d.text((80, 112), "L1-L5各20人；图中全部统计均来自仿真数据", font=font(24), fill="#444444")
-    levels = report["assessment_results"]["levels"]
-    max_score = max(item["mean_score"] for item in levels.values())
-    x0, y0, chart_w, chart_h = 100, 240, 980, 540
-    d.line((x0, y0 + chart_h, x0 + chart_w, y0 + chart_h), fill="#222222", width=3)
-    d.line((x0, y0, x0, y0 + chart_h), fill="#222222", width=3)
-    bar_w, gap = 125, 62
-    for index, level in enumerate(("L1", "L2", "L3", "L4", "L5")):
-        value = levels[level]["mean_score"]
-        height = int(chart_h * value / max(100, max_score))
-        left = x0 + 70 + index * (bar_w + gap)
-        top = y0 + chart_h - height
-        shade = 225 - index * 30
-        d.rectangle((left, top, left + bar_w, y0 + chart_h), fill=(shade, shade, shade), outline="#222222", width=2)
-        d.text((left + 20, top - 42), f"{value:.1f}", font=font(24, True), fill="#111111")
-        d.text((left + 38, y0 + chart_h + 18), level, font=font(26, True), fill="#111111")
-        d.text((left + 22, y0 + chart_h + 58), "n=20", font=font(20), fill="#444444")
-    d.text((300, 835), "各层测评平均分（当前等级阈值尚未校准）", font=font(24, True), fill="#111111")
-    metrics = [
-        ("潜在能力-测评分", report["assessment_results"]["latent_observed_pearson"]),
-        ("教师间相关", report["double_review"]["inter_rater_pearson"]),
-        ("加权Kappa", report["double_review"]["quadratic_weighted_kappa"]),
-        ("等级命中率", report["assessment_results"]["overall_classification_accuracy"]),
-    ]
-    card_x = 1160
-    for index, (label, value) in enumerate(metrics):
-        top = 225 + index * 145
-        d.rounded_rectangle((card_x, top, 1705, top + 110), radius=14, fill="#F2F2F2", outline="#777777", width=2)
-        d.text((card_x + 28, top + 18), label, font=font(23), fill="#222222")
-        d.text((card_x + 365, top + 18), f"{value:.3f}", font=font(30, True), fill="#111111")
-    d.text((1160, 824), "一致性较好，但等级阈值明显偏高，需校准。", font=font(20, True), fill="#222222")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    img.save(path)
-
-
 def load_question_examples() -> dict:
     from question_bank.loader import load_all_questions
 
@@ -788,24 +715,22 @@ def build_function_doc(examples: dict) -> Path:
     configure_document(doc, "01 详细功能设计文档")
     doc.core_properties.title = "A01 AI能力测评智能体——详细功能设计文档"
     add_cover(doc, "详细功能设计文档", "测评流程、用户交互原型与六维题例说明", "（1）")
-    # 封面单独成页；正文各章节自然续排，避免长表格后出现稀疏空白页。
-    doc.add_page_break = lambda: doc.add_paragraph()
 
-    add_section_intro(doc, "1. 文档目的与产品定位", "平台聚焦一个业务场景：校企联合 AI 能力培养。以一套平台贯通企业岗位标准、教师发布与分析测评、学生作答与成长、训练复测和授权后的岗位能力参考，不建设三套割裂系统。")
-    add_callout(doc, "设计目标", "形成“企业岗位标准—教师测评—学生能力画像—分层教学—训练复测—授权匹配”的完整闭环。学生端和教师端重点实现，企业端只承担岗位标准共建与匿名群体洞察。")
+    add_section_intro(doc, "1. 文档目的与产品定位", "本系统面向高校学员、教师/培训师及教学管理者，通过客观题、开放作答与实操任务，在较短测评时间内形成可解释、可追溯的六维 AI 能力画像，并将结果转化为个体学习建议和群体教学决策依据。")
+    add_callout(doc, "设计目标", "以“测得准、解释清、可复核、能扩展”为主线：用分层与自适应减少无效题量，用证据与置信度避免单题定级，用人工复核守住开放题评分边界。")
     doc.add_heading("1.1 用户角色与核心任务", level=2)
     add_table(doc, ["角色", "核心任务", "系统输出"], [
-        ["学生（重点）", "创建/继续测评；过程引导；上传证据；查看报告、成长与授权岗位参考", "L1–L5、六维雷达图、证据、建议、成长记录与本人岗位参考"],
-        ["教师（重点）", "查看实名班级画像；管理题库；对开放作答独立评分；处理分歧", "群体短板、题目质量、评审一致性、裁决记录与教研数据"],
-        ["企业（轻量）", "维护岗位能力模板；查看满足隐私阈值的匿名群体统计", "岗位六维权重/门槛、匿名群体画像；不得查看个人记录"],
+        ["学员", "创建/继续测评；阶段内选题；完成开放与实操任务；查看解析", "综合分、L1–L5等级、六维雷达图、证据、建议与成长记录"],
+        ["教师/评审", "查看班级画像；对开放作答独立评分；处理分歧", "群体短板、题目质量、评审一致性与裁决记录"],
+        ["题库管理员", "新增、编辑、启停、导入导出和版本检查", "题库统计、质量预警、操作版本与备份文件"],
+        ["学校/企业", "开展课程诊断、培训评估或能力认证试点", "聚合画像、课程改进线索与可对接的数据接口"],
     ], [1.05, 2.75, 2.70])
 
     doc.add_heading("1.2 当前交付范围", level=2)
-    add_callout(doc, "角色口径", "学生、教师、企业是平台业务角色；项目负责人、技术负责人、客户关系经理是参赛团队角色。两套角色用于不同维度，文档、分工与答辩中不得混淆。", fill=LIGHT_RED)
     add_table(doc, ["状态", "范围"], [
-        ["已实现", "90题六维题库、自适应选题、报告与成长档案、教师题库/复核/导出、百宝箱评分适配与真实接口验证、企业独立密钥/岗位模板/匿名聚合、学生授权岗位参考、过程引导和证据文件留存。"],
-        ["部分实现", "多模态已支持图片/PDF/文本等证据上传与摘要，但未调用视觉模型解读；过程对话为结构化引导，不等同通用大模型连续会话；当前权限为原型级密钥/UUID。"],
-        ["尚未实现", "真实外部 AI 操作沙箱、生产级统一身份与多租户、至少30名学员真实试测、两名教师双评/Kappa和正式效度结论。"],
+        ["已实现", "六维90题题库、自适应选题、15/18/25题模式、题号导航、客观/开放/实操作答、结构化初评、报告、成长档案、题库后台、双人复核、统计与导出。"],
+        ["待外部条件", "百宝箱正式接口与 Token；开放题真实模型评分的一致性验证；至少30名真实学员与两名教师的测评效度验证。"],
+        ["本次不含", "提交材料序号（3）的演示视频或正式在线测试环境。"],
     ], [1.25, 5.25])
 
     doc.add_page_break()
@@ -839,7 +764,7 @@ def build_function_doc(examples: dict) -> Path:
         "分层初测：前12题按六个维度轮转，前6题为难度1，后6题为难度2；同一测评按题目ID去重。",
         "自适应补测：按“置信度优先、分数次优先”排序维度，在薄弱或证据不足的维度继续抽题；根据当前分数选择难度1/2/3。",
         "开放/实操：目标题量末段至少包含一题开放作答和一题实操任务，避免只凭客观题判断高阶能力。",
-        "评分：客观题确定性评分；配置运行时令牌后由百宝箱评分智能体输出结构化初评，失败时透明降级为本地量表并进入人工复核。",
+        "评分：客观题确定性评分；开放与实操题由结构化量表初评并标记人工复核。取得百宝箱 Token 后启用模型评分适配器。",
         "反馈与巩固：提交后留在答题界面，以错误/半对/全对三种状态着色，错误题立即显示正确答案和解析；按钮切换为“进入下一题”。",
         "报告：完成全部目标题量后计算六维分数、置信度、优势/薄弱项、题型与难度分布，并形成学习建议与成长档案。",
     ])
@@ -852,15 +777,13 @@ def build_function_doc(examples: dict) -> Path:
     ], [1.2, 0.8, 2.0, 2.5])
 
     doc.add_page_break()
-    add_section_intro(doc, "4. 用户交互原型", "交互遵循“当前任务突出、状态可见、错误即时巩固”的原则。新版 UI 采用参考图的纸张、粗边框与编辑部式视觉语言，同时保留原有题号、测评状态、报告和教学管理功能。")
-    add_picture(doc, ROOT / "docs" / "UI预览_三角色首页.png", "图 2  新版三角色平台首页（真实浏览器渲染）", width=6.25)
+    add_section_intro(doc, "4. 用户交互原型", "交互遵循“当前任务突出、状态可见、错误即时巩固”的原则。题号面板置于进度条下方，阶段内允许自由选题；已提交题目可以回看，但不能重复计分。")
     add_word_ui_wireframe(doc)
     doc.add_heading("4.1 答题页关键交互", level=2)
     add_table(doc, ["区域", "交互设计", "反馈规则"], [
         ["进度与题号", "显示已答/目标题量；圆角矩形题号可点击；第二阶段未解锁题号不可操作", "当前题青绿；未答中性灰；错误浅红；半对暖黄；全对浅蓝"],
         ["题目组件", "选择题显示近似长度选项；开放/实操显示多行文本框和评分要点提示", "防止空答案提交；保留用户原始作答"],
         ["提交后", "页面不跳转，显示得分状态、正确答案/评分量表和解析", "按钮由“提交本题”替换为“进入下一题”"],
-        ["过程证据", "开放/实操题可请求最多6轮结构化引导，并上传图片、PDF、文本或数据文件", "文件≤5MB；保存SHA-256摘要；教师复核可见"],
         ["中断续答", "浏览器保存学员ID；重新进入时恢复未完成测评", "后端数据库保存引擎状态与作答记录"],
     ], [1.05, 3.15, 2.30], font_size=8.7)
 
@@ -963,36 +886,31 @@ def build_function_doc(examples: dict) -> Path:
         ["用户交互", "题号导航、阶段解锁、三态反馈、即时解析、继续作答可用", "已实现"],
         ["六维题例", "每维≥15题，包含基础、进阶及非客观任务示例", "已实现"],
         ["报告输出", "雷达图、维度分、置信度、证据、建议、历次记录", "已实现"],
-        ["教师管理", "班级看板、题库、复核、统计、导入导出受教师密钥保护", "已实现"],
-        ["企业轻量端", "独立密钥、岗位模板、匿名群体画像；不返回姓名/答案/个人报告", "已实现"],
-        ["授权岗位参考", "学员主动授权后生成；仅本人页面展示；不得作为自动录用依据", "已实现"],
-        ["百宝箱评分", "评分智能体与题库教研智能体已发布；结构化输出、异常降级已验证", "已接入；真实效度待验证"],
-        ["多模态/实操", "证据文件上传与摘要已实现；视觉理解和外部AI操作沙箱", "部分实现"],
-        ["效度与双评", "100份分层仿真、200份非客观题双评；真实学生/教师仍需现场开展", "仿真完成；真实待验证"],
+        ["教师管理", "班级看板、题库、复核、统计、导入导出受鉴权保护", "已实现"],
+        ["百宝箱评分", "正式 Token、结构化输出、异常降级、人工一致性验证", "待接入/待验证"],
+        ["真实效度", "≥30名学员、教师双评、Kappa/相关性/区分度分析", "待真实试测"],
     ], [1.35, 3.95, 1.20], font_size=8.7)
-    add_callout(doc, "新增仿真证据", "L1-L5各20人、共2500条作答；潜在能力与测评分相关0.946。200份非客观题完成400条独立模拟教师评分，加权Kappa为0.861。当前等级命中率仅31%，暴露固定阈值偏高问题，必须校准后再做真实试测。")
-    add_callout(doc, "提交表述建议", "可陈述百宝箱双智能体已发布且真实接口调用成功；不得把未配置令牌时的本地降级结果、结构化引导、文件留存或合成模拟分别夸大为真实模型评分、通用连续对话、多模态理解或真实效度。", fill=LIGHT_RED)
+    add_callout(doc, "提交表述建议", "文档与答辩中可展示“当前系统完整可运行、非百宝箱功能已实现”；不得把本地量表初评描述为已验证的大模型自动评分，也不得把合成模拟结果描述为真实准确率。", fill=LIGHT_RED)
 
-    path = OUT / "01_详细功能设计文档.docx"
+    path = OUT / "01_详细功能设计文档_黑白版.docx"
     doc.save(path)
     return path
 
 
 def build_technical_doc() -> Path:
     doc = Document()
-    configure_document(doc, "02 技术架构、核心代码与关键技术选型说明")
+    configure_document(doc, "02 技术架构与关键技术说明")
     doc.core_properties.title = "A01 AI能力测评智能体——技术架构、核心代码与关键技术选型"
-    add_cover(doc, "技术架构、核心代码与关键技术选型说明", "三角色架构、测评引擎、百宝箱、权限、证据链与数据存储", "（2）")
-    doc.add_page_break = lambda: doc.add_paragraph()
+    add_cover(doc, "技术架构与关键技术说明", "技术架构图、核心代码示例、测评引擎、模型调用与数据存储", "（2）")
 
-    add_section_intro(doc, "1. 架构目标", "以一套 FastAPI 平台承载学生、教师、企业三类业务角色。当前单机版本以 SQLite 支撑竞赛原型；通过角色隔离、百宝箱评分适配、匿名聚合、授权岗位参考和过程证据链形成可运行闭环。")
+    add_section_intro(doc, "1. 架构目标", "架构围绕可运行、可追溯、可替换和可扩展设计。当前单机版本以 FastAPI + SQLite 支撑队内测试；自适应引擎、评分适配器、报告服务和数据存储解耦，为后续百宝箱、多模态与机构级部署保留清晰扩展点。")
     add_word_architecture(doc)
     add_table(doc, ["层次", "组件", "职责"], [
-        ["交互层", "原生HTML/CSS/JavaScript", "学生测评/成长/授权匹配；教师教研；企业岗位模板与匿名洞察"],
-        ["接口与权限", "FastAPI + Pydantic", "UUID学生会话、教师密钥、企业独立密钥、输入校验与导出"],
-        ["领域层", "AdaptiveTestEngine / LLMScorer / enterprise", "自适应、百宝箱评分与降级、岗位匹配、隐私阈值、结构化引导"],
-        ["持久层", "sqlite3 + JSON题库 + evidence", "会话/答案/版本/复核/反馈/授权/对话/证据/岗位模板"],
-        ["外部能力", "百宝箱双智能体 / Responses兼容通道", "评分智能体与题库教研智能体已发布并通过真实接口验证"],
+        ["交互层", "原生HTML/CSS/JavaScript", "响应式单页界面；测评、报告、成长档案、管理与复核交互"],
+        ["接口层", "FastAPI + Pydantic", "路由、参数校验、状态码、管理鉴权、文件导出与静态页面服务"],
+        ["领域层", "AdaptiveTestEngine / LLMScorer", "分层选题、难度路由、计分置信度、结构化评分和降级"],
+        ["持久层", "sqlite3 + JSON题库", "用户、会话、答案、题目版本、人工复核、反馈及报告证据"],
+        ["外部能力", "Responses API兼容通道 / 百宝箱", "开放题模型评分；当前百宝箱为待Token接入项"],
     ], [1.10, 2.20, 3.20], font_size=8.7)
 
     doc.add_page_break()
@@ -1002,7 +920,7 @@ def build_technical_doc() -> Path:
         ["原生Web", "无构建链、部署简单、局域网/隧道即可访问", "复杂状态管理扩展成本较高", "需要时迁移Vue/React并复用现有REST API"],
         ["SQLite", "零运维、事务可靠、适合单机演示与小样本试测", "并发写入与多租户能力有限", "PostgreSQL + 连接池 + 迁移脚本"],
         ["JSON题库种子", "便于团队审阅、版本管理和批量导入", "无法独立完成发布审批", "题库数据库化、草稿/审核/发布工作流"],
-        ["百宝箱 + 规则降级", "真实智能体接口已通；故障透明降级；避免评分链路中断", "接入成功不等同评分效度已证实", "真实双评、量表校准、调用审计与抽检"],
+        ["规则 + 模型适配器", "客观题确定性；模型故障可降级；避免锁定单一供应商", "规则初评不等同模型准确性", "百宝箱接入、量表校准、双评与抽检"],
         ["Canvas/CSS可视化", "无外部图表依赖、加载稳定", "复杂分析图扩展有限", "按需接入ECharts并保留无障碍数据表"],
     ], [1.15, 2.10, 1.55, 1.70], font_size=8.0)
     add_callout(doc, "开源与依赖说明", "核心业务逻辑为项目自研；使用 FastAPI、Pydantic、Uvicorn 等开源基础库提供 Web 服务能力。正式提交时应在 requirements 与项目说明中保留依赖名称、版本和用途。")
@@ -1048,51 +966,38 @@ def confidence(self, dimension: str) -> float:
         ["远程模型", "兼容 Responses API，要求JSON对象输出", "超时/解析失败降级本地量表并记录 warning", "model、score、rubric_met、feedback、needs_review"],
         ["人工复核", "两名评审独立评分；分歧时裁决", "保留各评审原始结果", "reviewer、score、comment、rubric、resolver"],
     ], [1.10, 2.40, 1.65, 1.35], font_size=8.1)
-    add_code_block(doc, "4.1 核心代码示例：百宝箱优先与透明降级", '''def score(self, question: dict, answer: str) -> dict:
-    if self.tbox_configured:
+    add_code_block(doc, "4.1 核心代码示例：模型调用与降级", '''def score(self, question: dict, answer: str) -> dict:
+    if self.api_key:
         try:
-            return self._tbox_score(question, answer)
+            return self._remote_score(question, answer)
         except Exception as exc:
             result = self._rubric_score(question, answer)
-            result["warning"] = f"百宝箱调用失败，已降级：{type(exc).__name__}"
+            result["warning"] = (
+                f"LLM 调用失败，已降级为规则评分：{type(exc).__name__}"
+            )
             return result
     return self._rubric_score(question, answer)''', "来源：llm/scorer.py。系统不会把降级结果伪装成真实模型评分。")
-    add_code_block(doc, "4.2 核心代码示例：百宝箱 /api/chat 请求", '''body = json.dumps({
-    "appId": self.tbox_app_id,
-    "query": json.dumps(prompt, ensure_ascii=False),
-    "userId": f"a01-score-{uuid.uuid4().hex}",
-    "stream": False,
+    add_code_block(doc, "4.2 核心代码示例：结构化请求", '''body = json.dumps({
+    "model": self.model,
+    "input": [{"role": "user", "content": [
+        {"type": "input_text", "text": json.dumps(prompt, ensure_ascii=False)}
+    ]}],
+    "text": {"format": {"type": "json_object"}},
 }).encode("utf-8")''', "模型输入包含题目、评分点、满分与学员作答；输出限定为结构化 JSON，便于校验和留痕。")
 
-    doc.add_heading("4.3 百宝箱接入实现", level=2)
+    doc.add_heading("4.3 百宝箱接入方案", level=2)
     add_numbers(doc, [
-        "已创建并发布评分智能体（APP ID：202608AP95fB21469777）与题库教研智能体（APP ID：202608AP9YhY21462248）。",
-        "llm/scorer.py 已实现 /api/chat 调用，并保持统一 score(question, answer) 返回结构。",
+        "取得平台接口文档、模型标识、Token、限额、请求/响应样例与数据使用条款。",
+        "在 llm/scorer.py 新增 BaibaoxiangScorer，保持统一 score(question, answer) 返回结构。",
         "使用环境变量/密钥管理服务注入 Token；禁止提交到代码仓库或写入数据库。",
         "对 score、rubric_met、feedback、needs_review 做JSON Schema校验，并限制分数范围。",
-        "设置60秒超时、独立userId和失败降级；置信度低于0.75时强制进入人工复核。",
+        "设置45秒超时、有限重试、调用ID和失败降级；高风险或低置信度结果进入人工复核。",
         "使用不少于30名真实学员、两名教师双评样本，计算模型—人工相关性、加权Kappa和分歧分布。",
     ])
-    add_callout(doc, "当前状态", "双智能体已发布，评分和题库生成均完成真实接口验证。运行时未注入 TBOX_TOKEN/TBOX_APP_ID 时，/api/status 会如实返回 not-configured 与 local-rubric；接入成功仍不等同真实评分效度已完成验证。", fill=LIGHT_RED)
-
-    doc.add_heading("4.4 核心代码示例：企业隐私阈值与授权匹配", level=2)
-    add_code_block(doc, "匿名群体数据门槛", '''if count < minimum_group_size:
-    return {
-        "eligible": False,
-        "sample_size": count,
-        "dimension_averages": {},
-        "notice": "样本不足，不展示群体统计",
-    }''', "来源：backend/database.py。企业端在样本不足时不返回可用于身份推断的维度统计。")
-    add_code_block(doc, "学生主动授权", '''if not request.authorized:
-    return {"authorized": False, "matches": []}
-scores = latest_completed_scores(user_id)
-return {
-    "authorized": True,
-    "matches": score_job_matches(scores, list_job_templates()),
-}''', "来源：backend/main.py。个人匹配只返回学生端，企业接口没有访问个人结果的路由。")
+    add_callout(doc, "当前状态", "系统状态接口返回 baibaoxiang: pending。现有 OPENAI 兼容通道是技术预留，不代表百宝箱已完成接入，也不代表开放题自动评分准确性已验证。", fill=LIGHT_RED)
 
     doc.add_page_break()
-    add_section_intro(doc, "5. 数据存储与追溯", "SQLite 存储学员、会话、作答、题库版本、人工复核、反馈、岗位模板、授权、过程对话和证据元数据。证据文件按测评隔离存储并记录 SHA-256 摘要。")
+    add_section_intro(doc, "5. 数据存储与追溯", "SQLite 存储学员、会话、作答、题库版本、人工复核与反馈。测评引擎状态以 JSON 保存在 tests 表中，服务重启或刷新后可恢复。")
     add_word_data_model(doc)
     add_table(doc, ["实体", "主键/约束", "关键内容"], [
         ["users", "id UUID", "姓名、班级/团队、创建时间"],
@@ -1103,9 +1008,6 @@ return {
         ["human_reviews", "(answer_id, reviewer)唯一", "独立评分、评语、评分量表"],
         ["review_resolutions", "answer_id唯一", "最终裁决分、裁决人、说明"],
         ["test_feedback", "test_id唯一", "体验评分、歧义题、易用性与报告反馈"],
-        ["job_templates / consents", "岗位ID / user_id唯一", "岗位权重与门槛；学员岗位参考授权状态"],
-        ["dialogue_turns", "(test_id,question_id,turn_index)唯一", "最多6轮结构化过程说明与引导"],
-        ["evidence_files", "UUID；test_id外键", "文件名、类型、大小、SHA-256、隔离存储路径"],
     ], [1.35, 2.10, 3.05], font_size=8.2)
     doc.add_heading("5.1 数据一致性策略", level=2)
     add_bullets(doc, [
@@ -1127,9 +1029,6 @@ return {
         ["GET /api/report/{id}", "生成完成报告", "六维、置信度、建议、逐题复盘"],
         ["GET /api/users/{id}/history", "学员成长档案", "历次完成记录与维度趋势"],
         ["/api/admin/*", "题库、看板、复核、反馈与导出", "要求 X-Admin-Key"],
-        ["/api/enterprise/*", "匿名群体洞察与岗位模板", "要求独立 X-Enterprise-Key"],
-        ["POST /api/users/{id}/job-match", "学员授权岗位能力参考", "仅本人页面使用，不进入企业端"],
-        ["/api/dialogue /api/evidence", "过程引导与多格式证据", "轮次、类型、大小、摘要与题目关联校验"],
     ], [2.40, 2.10, 2.00], font_size=8.0)
 
     doc.add_heading("6.1 作答请求时序", level=2)
@@ -1147,19 +1046,18 @@ return {
     add_table(doc, ["主题", "当前实现", "生产化要求"], [
         ["启动", "Windows 一键启动；Uvicorn 监听本机/局域网", "进程托管、健康检查、日志轮转、自动重启"],
         ["远程测试", "Cloudflare Quick Tunnel 临时地址", "固定域名、反向代理、HTTPS与访问控制"],
-        ["身份权限", "学生UUID；教师和企业使用相互独立密钥", "统一身份、细粒度RBAC、班级/机构数据隔离"],
-        ["数据保护", "企业匿名阈值≥3；岗位匹配需学生授权；证据摘要", "加密传输、备份、保留期限、撤回/删除与审计"],
+        ["身份权限", "学员随机ID；管理端单密钥", "统一身份、RBAC、班级/机构数据隔离"],
+        ["数据保护", "SQLite本地文件；管理导出鉴权", "加密传输、备份、保留期限、匿名化与审计"],
         ["模型调用", "环境变量密钥；失败降级", "密钥托管、限额、内容安全、调用审计与成本监控"],
-        ["扩展题型", "图片/PDF/文本/数据证据上传已实现", "病毒扫描、视觉模型理解与真实AI操作沙箱"],
+        ["扩展题型", "schema已预留code/image类型", "沙箱执行、图像上传扫描、多模态评分与证据保存"],
     ], [1.25, 2.40, 2.85], font_size=8.1)
 
     doc.add_heading("7.1 测试与质量门槛", level=2)
     add_bullets(doc, [
         "题库加载校验：ID唯一、六维有效、难度合法、选择题选项/答案完整、开放题量表完整。",
         "测评就绪门槛：每维总题数≥15、客观题≥10、开放或实操题≥1。",
-        "21项自动化测试覆盖题库、会话隔离、自适应题组、评分、三角色权限、匿名阈值、岗位匹配、文件边界、仿真和复核流程。",
-        "100份分层仿真生成2500条作答；200份非客观题完成400条模拟教师评分和14条争议裁决。",
-        "仿真潜在能力与测评分相关0.946，但等级命中率仅31%，证明当前固定阈值需要校准；该结果不替代真实学员与教师验证。",
+        "单元测试覆盖题库、会话隔离、自适应题组、评分、报告、题库管理与复核流程。",
+        "算法模拟只用于发现路由与阈值问题，不替代真实学员与人工评分验证。",
         "正式验收前执行浏览器完整流程、并发会话、断网恢复、接口权限和数据库备份恢复测试。",
     ])
     add_callout(doc, "可扩展结论", "新增千题题库、百宝箱评分、多模态题型或 PostgreSQL 不需要推翻现有测评流程；主要变化集中在题库内容、评分适配器、存储实现与部署设施。")
@@ -1170,31 +1068,30 @@ return {
         ["技术架构图", "图1：交互、接口、领域、数据与外部模型分层", "已完成"],
         ["测评引擎设计", "第3章：分层初测、低置信度补测、难度路由与完成判定", "已实现"],
         ["核心代码示例", "第3–4章：题组生成、置信度、模型调用与结构化请求", "已完成"],
-        ["大模型调用方式", "百宝箱 /api/chat、结构化JSON、边界校验、失败降级", "双智能体已发布并完成真实接口验证"],
+        ["大模型调用方式", "Responses API兼容适配器、JSON输出、失败降级、百宝箱接入方案", "通用适配已实现；百宝箱待Token"],
         ["数据存储方案", "图2与第5章：SQLite实体、约束、版本与迁移路径", "已实现"],
         ["安全与部署", "第7章：鉴权、密钥、隧道边界与生产化要求", "预测试可用；生产化待实施"],
     ], [1.40, 3.95, 1.15], font_size=8.5)
 
-    path = OUT / "02_技术架构、核心代码与关键技术选型说明.docx"
+    path = OUT / "02_技术架构与关键技术说明_黑白版.docx"
     doc.save(path)
     return path
 
 
 def build_future_doc() -> Path:
     doc = Document()
-    configure_document(doc, "03 未来发展文档")
+    configure_document(doc, "04 未来发展文档")
     doc.core_properties.title = "A01 AI能力测评智能体——未来发展文档"
-    add_cover(doc, "未来发展文档", "产品迭代、市场推广、教育生态与风险治理", "（3）")
-    doc.add_page_break = lambda: doc.add_paragraph()
+    add_cover(doc, "未来发展文档", "产品迭代、市场推广与教育生态整合方案", "（4）")
 
-    add_section_intro(doc, "1. 发展愿景与当前基线", "产品将从校企联合 AI 能力培养原型演进为“岗位标准—测评—教学—训练—复测—授权匹配”的能力成长基础设施。当前已具备三角色入口、六维题库、自适应测评、百宝箱双智能体、过程证据、教师复核与企业轻量闭环，并完成100份分层仿真和模拟教师双评；下一阶段优先校准等级阈值并开展真实学生/教师验证，再推进视觉模型理解、真实AI操作环境和规模化部署。")
+    add_section_intro(doc, "1. 发展愿景与当前基线", "产品将从“可运行的AI能力诊断工具”演进为“测评—学习—练习—复测—认证”的能力成长基础设施。当前版本已具备六维题库、自适应测评、报告、成长档案、题库管理和人工复核底座；下一阶段优先解决真实效度、百宝箱评分和规模化部署。")
     add_picture(doc, ASSETS / "05_roadmap.png", "图 1  从提交验证到教育生态平台化的演进路线", width=6.25)
     add_callout(doc, "迭代原则", "先验证测评是否有效，再扩大题量与用户规模；先建立责任、审计和人工复核，再提升自动化比例。")
 
     doc.add_page_break()
     add_section_intro(doc, "2. 产品迭代路线", "路线按证据成熟度分阶段推进，每阶段都设置可量化的退出条件。")
     add_table(doc, ["阶段", "重点建设", "关键交付", "退出指标"], [
-        ["提交前", "真实预测试与评分校准", "30名以上学员、教师双评、低质题修订、百宝箱真实样本评分", "完成率、Kappa/相关性、区分度与问题闭环"],
+        ["提交前", "真实预测试与评分校准", "30名以上学员、教师双评、低质题修订、百宝箱接入验证", "完成率、Kappa/相关性、区分度与问题闭环"],
         ["0–3个月", "课程级试点", "千题题库一期、资源推荐、教师诊断周报、复测任务", "课程使用率、报告有用度、建议完成率"],
         ["3–6个月", "机构级平台", "PostgreSQL、多租户、统一身份、班级/课程配置、运营看板", "稳定性、并发、权限审计、机构续用"],
         ["6–12个月", "生态与标准", "岗位模板、证书标准、开放API、LMS/招聘/学习档案对接", "标准复用数、生态连接数、能力提升证据"],
@@ -1216,7 +1113,7 @@ def build_future_doc() -> Path:
         ["题目参数", "根据真实作答估计难度与区分度，逐步引入IRT/CAT", "交叉验证、分层样本、阈值稳定性"],
         ["等级标准", "将L1–L5与课程目标、岗位任务和可观察产物对齐", "专家效度、外部标准关联、复测稳定性"],
         ["公平性", "监测专业、年级、性别等群体差异并限制不必要特征", "DIF分析、申诉样本复核、偏差审计"],
-        ["多模态任务", "在现有文件证据留存上增加视觉理解、代码执行与真实工具调用", "安全扫描、沙箱验证、产物评分、人工抽检"],
+        ["多模态任务", "代码、图像鉴别、对话过程与真实工具调用", "沙箱验证、产物评分、人工抽检"],
     ], [1.25, 3.10, 2.15], font_size=8.2)
 
     doc.add_page_break()
@@ -1245,7 +1142,7 @@ def build_future_doc() -> Path:
         ["LMS/教学平台", "REST API、LTI、Webhook", "课程目标、资源、作业", "诊断结果、学习建议、复测任务"],
         ["学习档案/LRS", "xAPI/标准事件", "学习活动与完成记录", "能力成长轨迹与证据链"],
         ["证书/技能标准", "标准映射与签发接口", "认证规则、标准版本", "可核验能力等级与复核状态"],
-        ["企业培训/招聘", "岗位模板、匿名群体洞察、授权匹配接口", "岗位任务、能力权重", "培训差距与本人可见的岗位能力参考"],
+        ["企业培训/招聘", "岗位模板、批量测评、报表API", "岗位任务、能力权重", "人才画像、培训差距与岗位匹配建议"],
         ["百宝箱", "服务端API适配器", "题目、量表、作答、最小上下文", "结构化初评、反馈、对话/任务能力扩展"],
     ], [1.25, 1.45, 1.65, 2.15], font_size=7.8)
     doc.add_heading("4.1 与“AI智能·教学辅具”数据打通", level=2)
@@ -1314,103 +1211,16 @@ def build_future_doc() -> Path:
     ])
 
     doc.add_page_break()
-    add_section_intro(doc, "8. 未来发展验收矩阵", "该矩阵对应未来发展材料的产品、市场、生态和扩展要求。")
+    add_section_intro(doc, "8. 未来发展验收矩阵", "该矩阵对应提交材料序号（4）的三项要求。")
     add_table(doc, ["提交要求", "本文件对应内容", "交付结论"], [
         ["产品迭代方向", "第2–3章：题库、评分、效度、多模态与个性化学习闭环", "分阶段、有退出指标"],
         ["市场推广策略", "第5章：高校、职教、企业与个人市场，试点—案例—复制—生态", "以验证数据而非宣传口号驱动"],
         ["教育生态整合", "第4章：身份、LMS、LRS、证书、招聘与百宝箱接口", "统一能力字典、最小数据与版本治理"],
         ["创新与可扩展", "千题题库、IRT/CAT、多模态、岗位/证书标准与开放API", "建立在现有模块化架构之上"],
     ], [1.35, 4.05, 1.10], font_size=8.5)
-    add_callout(doc, "近期首要行动", "百宝箱、三角色原型以及100份分层仿真双评已经完成。下一步先按仿真暴露的问题校准等级阈值，再用小规模真实学生与真实教师复核确认；随后完成视觉/实操任务验证与稳定在线部署。")
+    add_callout(doc, "近期首要行动", "最有价值的下一步不是继续堆叠界面功能，而是完成真实预测试、教师双评、百宝箱接入与稳定在线部署，以形成评分有效性和可用性的可信证据。")
 
-    path = OUT / "03_未来发展文档.docx"
-    doc.save(path)
-    return path
-
-
-def build_validation_doc(report: dict) -> Path:
-    doc = Document()
-    configure_document(doc, "04 100份仿真人工样本与模拟教师双评校验报告")
-    doc.core_properties.title = "A01 100份仿真人工样本与模拟教师双评校验报告"
-    add_cover(doc, "100份仿真人工样本与模拟教师双评校验报告", "分层样本、测评表现、一致性统计与阈值校准", "（4）")
-    doc.add_page_break = lambda: doc.add_paragraph()
-
-    add_section_intro(doc, "1. 结论摘要", "本轮以固定随机种子生成100名仿真学员，L1-L5各20人，每人完成25题。结果验证了自适应流程、双评和争议裁决可以规模化运行，也暴露出现有等级阈值与仿真能力层级不匹配。")
-    add_picture(doc, ASSETS / "06_validation_summary.png", "图 1  分层测评分与一致性关键指标", width=6.25)
-    add_table(doc, ["指标", "结果", "解释"], [
-        ["样本结构", "100人；L1-L5各20人", "单层占比20%，不存在某一层过度集中"],
-        ["完整作答", "2500条；完成率100%", "每人25题，均含开放题和实操题"],
-        ["潜在能力-测评分相关", f"{report['assessment_results']['latent_observed_pearson']:.3f}", "分数能较好反映连续能力排序"],
-        ["等级命中率", f"{report['assessment_results']['overall_classification_accuracy']:.1%}", "现有50/65/80/90阈值整体偏高，必须校准"],
-        ["模拟教师双评", "200份答案 / 400条评分", "两名独立模拟教师均覆盖所有非客观题"],
-        ["二次加权Kappa", f"{report['double_review']['quadratic_weighted_kappa']:.3f}", "模拟评分器之间一致性较好"],
-        ["争议裁决", f"{report['double_review']['resolved_disagreements']}份", "差异达到满分20%时引入模拟教师C"],
-    ], [1.65, 1.65, 3.20], font_size=8.3)
-    add_callout(doc, "证据边界", report["disclaimer"], fill=LIGHT_RED)
-
-    doc.add_page_break()
-    add_section_intro(doc, "2. 样本设计与个体差异", "五层等额抽样保证能力覆盖；同层内部通过专业背景、六维偏科、速度、粗心率和开放题表达产生个体差异，避免复制固定答案。")
-    add_table(doc, ["层级", "人数", "平均分", "标准差", "平均用时", "预测等级分布"], [
-        [level, str(values["sample_size"]), f"{values['mean_score']:.2f}", f"{values['score_sd']:.2f}", f"{values['mean_minutes']:.2f}分钟", json.dumps(values["predicted_levels"], ensure_ascii=False)]
-        for level, values in report["assessment_results"]["levels"].items()
-    ], [0.65, 0.65, 0.90, 0.80, 1.05, 2.45], font_size=8.2)
-    add_bullets(doc, [
-        "能力层级：L1-L5各20人，最大层级占比20%。",
-        "背景覆盖：文史、经管、理工、计算机、设计、教育、医学、公共管理、高职和跨专业共10类。",
-        "六维差异：每人随机设置两个优势维度和两个薄弱维度，其余维度保留轻微波动。",
-        "行为差异：快速、稳健、审慎三类节奏叠加个人速度系数与粗心率。",
-        "开放题差异：按能力决定量表覆盖、关键词覆盖、结构完整度和风险控制内容。",
-    ])
-
-    doc.add_page_break()
-    add_section_intro(doc, "3. 模拟教师双评与裁决", "两名模拟教师在不知道对方评分的情况下独立评价200份开放/实操答案；当差异达到满分20%时，由第三模拟评分器与中位数规则裁决。")
-    add_table(doc, ["指标", "数值", "判读"], [
-        ["双评答案数", str(report["double_review"]["double_reviewed_answers"]), "达到流程统计规模"],
-        ["教师间Pearson", f"{report['double_review']['inter_rater_pearson']:.3f}", "连续分数变化一致"],
-        ["二次加权Kappa", f"{report['double_review']['quadratic_weighted_kappa']:.3f}", "分档一致性较好"],
-        ["模型-模拟教师Pearson", f"{report['double_review']['model_human_pearson']:.3f}", "规则初评与模拟人工均分较一致"],
-        ["重大分歧", str(report["double_review"]["major_disagreements"]), "均已进入第三方模拟裁决"],
-        ["裁决完成", str(report["double_review"]["resolved_disagreements"]), "争议闭环完成"],
-    ], [2.15, 1.15, 3.20], font_size=8.6)
-    add_callout(doc, "不能替代真人", "Kappa与相关系数描述的是两名模拟评分器的一致性，只能验证数据结构、复核流程和统计代码；真实教师可能具有不同量表理解、专业判断和群体偏差。")
-
-    doc.add_page_break()
-    add_section_intro(doc, "4. 等级阈值问题", "连续能力排序表现较好，但固定等级阈值明显高于本轮仿真分布，造成L2-L5大量向低一级或两级偏移。该问题必须在真实试测前先形成校准候选。")
-    predicted_labels = ("L1", "L2", "L3", "L4", "L5")
-    add_table(doc, ["真实仿真层级", *predicted_labels], [
-        [level, *[str(values["predicted_levels"].get(predicted, 0)) for predicted in predicted_labels]]
-        for level, values in report["assessment_results"]["levels"].items()
-    ], [1.45, 1.01, 1.01, 1.01, 1.01, 1.01], font_size=8.5)
-    means = [report["assessment_results"]["levels"][level]["mean_score"] for level in predicted_labels]
-    candidates = [(means[index] + means[index + 1]) / 2 for index in range(4)]
-    add_table(doc, ["分界", "当前下限", "仿真中点候选", "处置"], [
-        ["L1/L2", "50", f"{candidates[0]:.1f}", "仅作为下一轮仿真候选"],
-        ["L2/L3", "65", f"{candidates[1]:.1f}", "结合真实教师判断复核"],
-        ["L3/L4", "80", f"{candidates[2]:.1f}", "检查课程目标与岗位标准"],
-        ["L4/L5", "90", f"{candidates[3]:.1f}", "高等级需增加真实实操作品"],
-    ], [1.15, 1.15, 1.65, 2.55], font_size=8.5)
-    add_callout(doc, "不直接改生产阈值", "仿真中点只能用于候选方案比较。正式阈值必须结合真实学生样本、教师判断、课程目标、复测稳定性和外部任务表现确定。", fill=LIGHT_RED)
-
-    doc.add_page_break()
-    add_section_intro(doc, "5. 可复现资产与后续验证", "全部仿真数据保存在独立目录，不写入正式assessment.db。固定种子允许团队复跑并比较算法或阈值调整前后的差异。")
-    add_table(doc, ["资产", "内容", "用途"], [
-        ["synthetic_validation.db", "100用户、100测评、2500答案、400双评与14裁决", "完整追溯与接口验证"],
-        ["synthetic_respondents.csv", "层级、背景、用时、总分和六维分", "分层统计与图表"],
-        ["synthetic_answers.csv", "逐题类型、难度、得分和用时", "题目质量与区分度分析"],
-        ["synthetic_teacher_reviews.csv", "两名模拟教师逐答案评分", "相关、Kappa和偏差分析"],
-        ["synthetic_review_resolutions.csv", "争议答案模拟裁决", "复核闭环审计"],
-        ["synthetic_validation_report.json", "本报告使用的汇总指标", "API与文档数据源"],
-    ], [2.20, 2.75, 1.55], font_size=8.0)
-    add_numbers(doc, [
-        "使用仿真中点作为候选阈值再运行100份样本，比较命中率、相邻混淆和六维稳定性。",
-        "招募可获得的少量真实学生，不要求一次达到100人；优先覆盖不同能力与专业。",
-        "邀请两名真实教师对同一批开放/实操答案盲评，计算真实Kappa并访谈分歧原因。",
-        "将真实教师裁决结果用于修订量表、提示词和题目，而不是仅调整模型分数。",
-        "真实样本不足时只报告样本数、方法和不确定性，不把仿真结果改名为真人结果。",
-    ])
-    add_callout(doc, "复现命令", "python tools/simulate_balanced_cohort.py --output-dir docs/synthetic_validation_100 --per-level 20 --target 25 --seed 20260816")
-
-    path = OUT / "04_100份仿真人工样本与模拟教师双评校验报告.docx"
+    path = OUT / "04_未来发展文档.docx"
     doc.save(path)
     return path
 
@@ -1434,12 +1244,8 @@ def audit_document(path: Path) -> list[str]:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    ASSETS.mkdir(parents=True, exist_ok=True)
-    save_roadmap_diagram(ASSETS / "05_roadmap.png")
-    synthetic = json.loads(SYNTHETIC_REPORT.read_text(encoding="utf-8"))
-    save_validation_chart(ASSETS / "06_validation_summary.png", synthetic)
     examples = load_question_examples()
-    paths = [build_function_doc(examples), build_technical_doc(), build_future_doc(), build_validation_doc(synthetic)]
+    paths = [build_function_doc(examples), build_technical_doc()]
     report = {
         "documents": [{"path": str(path), "size": path.stat().st_size, "issues": audit_document(path)} for path in paths],
         "assets": [],

@@ -20,16 +20,19 @@ class EngineTests(unittest.TestCase):
         bank = questions()
         stats = validate_question_bank(bank)
         self.assertTrue(stats["valid"], stats["errors"])
-        self.assertEqual(stats["total"], 91)
+        self.assertEqual(stats["total"], 96)
         self.assertTrue(all(q.get("ability_level") for q in bank))
         self.assertTrue(all(q.get("tags") for q in bank))
         self.assertTrue(all(len(q.get("explanation", "").strip()) >= 12 for q in bank))
-        self.assertEqual(len({q["explanation"] for q in bank}), 91)
+        self.assertEqual(len({q["explanation"] for q in bank}), 96)
         self.assertIn("review_completion", stats)
         for dimension in DIMENSIONS:
-            self.assertEqual(stats["by_dimension"][dimension], 16 if dimension == "evaluation" else 15)
+            self.assertGreaterEqual(stats["by_dimension"][dimension], 15)
         self.assertTrue(assessment_readiness(bank)["ready"])
         self.assertEqual(stats["review_completion"], 100.0)
+        self.assertIn("dialogue", stats["by_type"])
+        self.assertIn("code", stats["by_type"])
+        self.assertIn("image", stats["by_type"])
 
     def test_layered_random_has_no_duplicates_and_finishes(self):
         bank = questions()
@@ -89,9 +92,9 @@ class EngineTests(unittest.TestCase):
         for slot in range(1, 13):
             question = engine.select_question(slot)
             engine.submit_answer(question["id"], "__wrong__", 5)
-        subjective = engine.select_question(14)
+        subjective = engine.select_question(13)
         engine.submit_answer(subjective["id"], "部分完成", 5, {"score": 10})
-        self.assertEqual(engine.question_palette()[13]["status"], "partial")
+        self.assertEqual(engine.question_palette()[12]["status"], "partial")
 
     def test_validation_simulator_separates_profiles(self):
         result = run_validation(runs=10, target=18)

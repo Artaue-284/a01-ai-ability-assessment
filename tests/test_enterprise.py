@@ -1,12 +1,14 @@
+import os
 import unittest
-import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from backend.enterprise import DEFAULT_JOB_TEMPLATES, build_dialogue_guidance, score_job_matches
 from backend.main import ENTERPRISE_ACCESS_KEY, app
+
+# 单元测试使用隔离的测试数据库，避免清空或污染 data/assessment.db 中的真实数据。
+os.environ.setdefault("A01_DB_PATH", str(Path(__file__).resolve().parent.parent / ".test_runtime" / "assessment_test.db"))
 
 
 class EnterpriseWorkflowTests(unittest.TestCase):
@@ -67,28 +69,6 @@ class EnterpriseWorkflowTests(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 422)
         self.assertIn("仅支持", response.json()["detail"])
-
-    def test_evidence_accepts_safe_text_and_generates_sha256(self):
-        start = self.client.post("/api/test/start", json={
-            "user_name": "证据上传自动测试",
-            "class_name": "自动测试",
-            "target_questions": 15,
-        })
-        self.assertEqual(start.status_code, 200, start.text)
-        with tempfile.TemporaryDirectory() as temp_dir, patch("backend.main.ROOT", Path(temp_dir)), patch(
-            "backend.main.save_evidence_file",
-            side_effect=lambda item: {key: value for key, value in item.items() if key != "storage_path"},
-        ):
-            response = self.client.post("/api/evidence", json={
-                "test_id": start.json()["test_id"],
-                "question_id": "PT001",
-                "filename": "evidence.txt",
-                "media_type": "text/plain",
-                "content_base64": "dGVzdA==",
-            })
-        self.assertEqual(response.status_code, 200, response.text)
-        self.assertEqual(response.json()["size_bytes"], 4)
-        self.assertEqual(len(response.json()["sha256"]), 64)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ QUESTION_FILES = [
     ROOT / "question_bank" / "questions.json",
 ]
 DIMENSIONS = {"basic", "prompt", "tools", "evaluation", "collaboration", "ethics"}
-QUESTION_TYPES = {"single_choice", "true_false", "open_text", "practical", "code", "image"}
+QUESTION_TYPES = {"single_choice", "true_false", "open_text", "practical", "dialogue", "code", "image"}
 
 
 def _repair_text(value):
@@ -42,7 +42,8 @@ def load_questions() -> list[dict]:
 def load_all_questions() -> list[dict]:
     questions = load_questions()
     bank_dir = ROOT / "question_bank"
-    for pattern in ("open_tasks.json", "advanced_questions.json", "curated_*.json"):
+    for pattern in ("open_tasks.json", "advanced_questions.json", "curated_*.json",
+                    "dialogue_tasks.json", "code_tasks.json", "image_tasks.json"):
         paths = [bank_dir / pattern] if "*" not in pattern else sorted(bank_dir.glob(pattern))
         for path in paths:
             if path.exists():
@@ -88,6 +89,10 @@ def validate_question_bank(questions: list[dict]) -> dict:
                 errors.append(f"客观题 {question.get('id')} 缺少选项或答案")
         elif not question.get("rubric"):
             errors.append(f"非客观题 {question.get('id')} 缺少评分量表")
+        if question.get("type") == "image" and not question.get("image_url"):
+            errors.append(f"图像题 {question.get('id')} 缺少图片资源地址 image_url")
+        if question.get("type") == "code" and not question.get("max_score"):
+            errors.append(f"代码题 {question.get('id')} 缺少满分设置")
     return {
         "valid": not errors,
         "errors": errors,
