@@ -1,0 +1,128 @@
+[
+  {
+    "id": "TF301", "dimension": "basic", "difficulty": 1, "type": "true_false",
+    "question": "大语言模型的回答总是基于可靠的事实来源。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "模型可能生成幻觉内容，回答需经事实核验。",
+    "tags": ["幻觉"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF302", "dimension": "basic", "difficulty": 1, "type": "true_false",
+    "question": "大模型一次能处理的文本总量受上下文窗口限制。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "上下文窗口决定单次对话可容纳的输入与输出总长度。",
+    "tags": ["上下文"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF303", "dimension": "basic", "difficulty": 2, "type": "true_false",
+    "question": "多模态模型只能处理文字，不能识别图片。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "多模态模型可同时处理文本、图像、音频等多种输入。",
+    "tags": ["多模态"], "ability_level": "L3", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF304", "dimension": "prompt", "difficulty": 1, "type": "true_false",
+    "question": "提示词写得越模糊，模型的发挥空间越大，输出质量越高。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "模糊提示导致输出标准不明确，清晰指令才能稳定高质量。",
+    "tags": ["指令清晰"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF305", "dimension": "prompt", "difficulty": 1, "type": "true_false",
+    "question": "在提示中给出输入输出示例，可以帮助模型模仿期望的输出格式。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "少样本示例直接展示期望格式，是常见的提示技巧。",
+    "tags": ["少样本"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF306", "dimension": "prompt", "difficulty": 2, "type": "true_false",
+    "question": "要求模型“一步步思考”对提升多步推理任务的成功率没有帮助。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "思维链提示能显著提升需要多步推理的任务表现。",
+    "tags": ["思维链"], "ability_level": "L3", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF307", "dimension": "tools", "difficulty": 1, "type": "true_false",
+    "question": "数据分析场景中，让 AI 生成统计脚本并人工核验，比纯手工逐行处理更高效。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "AI 生成脚本可加速处理，但结果必须人工核验。",
+    "tags": ["数据分析"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF308", "dimension": "tools", "difficulty": 1, "type": "true_false",
+    "question": "给 AI 工具配置 API 密钥时，应尽量授予全部权限以便未来使用。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "应遵循最小权限原则，只授予完成任务所需的权限。",
+    "tags": ["权限"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF309", "dimension": "tools", "difficulty": 2, "type": "true_false",
+    "question": "自动化工作流平台可以把定时任务、AI 处理与消息推送串联成流水线。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "工作流平台支持编排触发、处理与推送等环节。",
+    "tags": ["自动化"], "ability_level": "L3", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF310", "dimension": "evaluation", "difficulty": 1, "type": "true_false",
+    "question": "AI 给出的统计数据可以直接引用，无需核对来源与口径。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "AI 可能编造数字，必须核对来源、统计口径与时间。",
+    "tags": ["事实核验"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF311", "dimension": "evaluation", "difficulty": 1, "type": "true_false",
+    "question": "发现 AI 答案与常识冲突时，应通过独立渠道交叉验证。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "冲突是核验信号，交叉验证是必要的确认手段。",
+    "tags": ["交叉验证"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF312", "dimension": "evaluation", "difficulty": 2, "type": "true_false",
+    "question": "AI 代码通过编译就说明逻辑一定正确，可以直接上线。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "编译通过只代表语法正确，业务逻辑需用例验证。",
+    "tags": ["代码核验"], "ability_level": "L3", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF313", "dimension": "collaboration", "difficulty": 1, "type": "true_false",
+    "question": "AI 输出用于对外发布前，应设置人工确认与审批节点。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "对外发布属高风险节点，人工审批是必要保障。",
+    "tags": ["检查点"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF314", "dimension": "collaboration", "difficulty": 1, "type": "true_false",
+    "question": "人机协同中，重复机械的初稿工作交给 AI、决策把关交给人是合理分工。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "按能力分工：机器执行重复任务，人负责判断与责任。",
+    "tags": ["分工"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF315", "dimension": "collaboration", "difficulty": 2, "type": "true_false",
+    "question": "AI 自动化流程出现异常时，正确的做法是忽略错误继续执行。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "异常应触发暂停、人工介入与复核，避免错误放大。",
+    "tags": ["异常处理"], "ability_level": "L3", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF316", "dimension": "ethics", "difficulty": 1, "type": "true_false",
+    "question": "把含个人信息的名单上传到公共 AI 工具前，应先做脱敏处理。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "个人信息上传前应脱敏并确认工具的数据条款。",
+    "tags": ["隐私"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF317", "dimension": "ethics", "difficulty": 1, "type": "true_false",
+    "question": "使用 AI 生成的论文内容不标注来源，属于合规的学术行为。",
+    "options": ["正确", "错误"], "answer": "错误",
+    "explanation": "AI 生成内容同样需要披露与引用管理，避免学术不端。",
+    "tags": ["学术诚信"], "ability_level": "L2", "discrimination": 1.0, "max_score": 10
+  },
+  {
+    "id": "TF318", "dimension": "ethics", "difficulty": 2, "type": "true_false",
+    "question": "AI 系统对不同群体表现差异较大时，应评估偏差并补充多样数据。",
+    "options": ["正确", "错误"], "answer": "正确",
+    "explanation": "群体差异需要通过数据、评估与披露来缩小。",
+    "tags": ["公平性"], "ability_level": "L3", "discrimination": 1.0, "max_score": 10
+  }
+]

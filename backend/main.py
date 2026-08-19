@@ -713,6 +713,7 @@ def select_test_question(test_id: str, slot_number: int):
         raise HTTPException(409, str(exc)) from exc
     submitted = next((item for item in test_answers(test_id) if item["question_id"] == question["id"]), None)
     source = question_index().get(question["id"], {})
+    objective_type = submitted and submitted["question_type"] in ("single_choice", "true_false")
     score_ratio = submitted["score"] / submitted["max_score"] if submitted and submitted["max_score"] else None
     submitted_feedback = json.loads(submitted["feedback_json"]) if submitted else {}
     save_state(test_id, engine.state, completed=row["status"] == "completed")
@@ -728,8 +729,8 @@ def select_test_question(test_id: str, slot_number: int):
         "submitted_score": submitted["score"] if submitted else None,
         "submitted_max_score": submitted["max_score"] if submitted else None,
         "submitted_explanation": source.get("explanation") if submitted else None,
-        "submitted_correct_answer": source.get("answer") if submitted and submitted["question_type"] == "single_choice" else None,
-        "submitted_rubric": source.get("rubric", []) if submitted and submitted["question_type"] != "single_choice" else [],
+        "submitted_correct_answer": source.get("answer") if objective_type else None,
+        "submitted_rubric": source.get("rubric", []) if submitted and not objective_type else [],
     }
 
 
@@ -742,7 +743,7 @@ def submit_answer(request: AnswerRequest):
     if question is None:
         raise HTTPException(404, "题目不存在")
     open_score = None
-    if question["type"] != "single_choice":
+    if question["type"] not in ("single_choice", "true_false"):
         transcript = "\n".join(
             f"{'学员' if turn['role'] == 'user' else 'AI助手'}：{turn['message']}"
             for turn in ai_chat_turns(request.test_id, request.question_id)
@@ -763,8 +764,8 @@ def submit_answer(request: AnswerRequest):
     ratio = result["score"] / result["max_score"] if result["max_score"] else 0
     result["submitted_status"] = "correct" if ratio >= 0.999 else "partial" if ratio >= 0.5 else "incorrect"
     result["explanation"] = question.get("explanation", "该题解析尚未补充。")
-    result["correct_answer"] = question.get("answer") if question["type"] == "single_choice" else None
-    result["rubric"] = question.get("rubric", []) if question["type"] != "single_choice" else []
+    result["correct_answer"] = question.get("answer") if question["type"] in ("single_choice", "true_false") else None
+    result["rubric"] = question.get("rubric", []) if question["type"] not in ("single_choice", "true_false") else []
     result["palette"] = engine.question_palette()
     save_state(request.test_id, engine.state, completed=result["completed"])
     return result
@@ -781,7 +782,7 @@ def report(test_id: str):
     answer_review = []
     for number, answer in enumerate(answers, start=1):
         question = index.get(answer["question_id"], {})
-        is_objective = answer["question_type"] == "single_choice"
+        is_objective = answer["question_type"] in ("single_choice", "true_false")
         answer_review.append({
             "number": number,
             "question_id": answer["question_id"],
@@ -884,9 +885,9 @@ def admin_save_question(request: QuestionRequest):
     question = request.model_dump(exclude={"changed_by"})
     if question["dimension"] not in DIMENSIONS:
         raise HTTPException(422, "能力维度无效")
-    if question["type"] == "single_choice" and (len(question["options"]) < 2 or question["answer"] not in question["options"]):
+    if question["type"] in ("single_choice", "true_false") and (len(question["options"]) < 2 or question["answer"] not in question["options"]):
         raise HTTPException(422, "客观题必须包含有效选项和唯一参考答案")
-    if question["type"] != "single_choice" and not question["rubric"]:
+    if question["type"] not in ("single_choice", "true_false") and not question["rubric"]:
         raise HTTPException(422, "开放题或实操题必须提供评分量表")
     if question["type"] == "image" and not question.get("image_url"):
         raise HTTPException(422, "图像任务必须提供图片资源地址 image_url")
@@ -919,9 +920,9 @@ def admin_import_questions(request: QuestionImportRequest):
             question = item.model_dump(exclude={"changed_by"})
             if question["dimension"] not in DIMENSIONS:
                 raise ValueError("能力维度无效")
-            if question["type"] == "single_choice" and (len(question["options"]) < 2 or question["answer"] not in question["options"]):
+            if question["type"] in ("single_choice", "true_false") and (len(question["options"]) < 2 or question["answer"] not in question["options"]):
                 raise ValueError("客观题选项或答案无效")
-            if question["type"] != "single_choice" and not question["rubric"]:
+            if question["type"] not in ("single_choice", "true_false") and not question["rubric"]:
                 raise ValueError("非客观题缺少评分量表")
             save_question_item(question, item.changed_by, action="import")
             saved.append(question["id"])

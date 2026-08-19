@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="440" viewBox="0 0 400 440">
+<rect width="400" height="440" fill="#f5f6f8"/>
+<rect x="60" y="80" width="280" height="280" fill="#fff" stroke="#2c3e50" stroke-width="4"/>
+<g fill="#2c3e50">
+<rect x="80" y="100" width="70" height="70"/><rect x="95" y="115" width="40" height="40" fill="#fff"/><rect x="110" y="130" width="10" height="10"/>
+<rect x="250" y="100" width="70" height="70"/><rect x="265" y="115" width="40" height="40" fill="#fff"/><rect x="280" y="130" width="10" height="10"/>
+</g>
+<g fill="#2c3e50">
+<rect x="120" y="200" width="20" height="20"/><rect x="160" y="200" width="20" height="20"/><rect x="200" y="240" width="20" height="20"/><rect x="120" y="280" width="20" height="20"/><rect x="240" y="280" width="20" height="20"/><rect x="160" y="320" width="20" height="20"/><rect x="200" y="320" width="20" height="20"/><rect x="280" y="320" width="20" height="20"/>
+<rect x="120" y="120" width="20" height="20"/><rect x="200" y="120" width="20" height="20"/><rect x="240" y="160" width="20" height="20"/><rect x="280" y="200" width="20" height="20"/><rect x="160" y="240" width="20" height="20"/><rect x="280" y="240" width="20" height="20"/><rect x="240" y="320" width="20" height="20"/>
+</g>
+<text x="140" y="405" font-size="14" fill="#7a8794" font-family="sans-serif">扫码报名二维码</text>
+</svg>

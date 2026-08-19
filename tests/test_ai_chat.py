@@ -96,6 +96,34 @@ class AiAssistantUnitTests(unittest.TestCase):
             self.assertIn("resources", TRAINING_RESOURCES[key])
             self.assertTrue(TRAINING_RESOURCES[key]["resources"])
 
+    def test_single_turn_reply_truncates_scripted_multi_turn_output(self):
+        """回归：模型一次性输出多轮引导剧本时，只保留当前一轮。"""
+        assistant = AIAssistant()
+        scripted = (
+            "你好！我们先来拆解目标。请问最常问的高频问题是什么？"
+            "（等待学员回复第1轮后，继续引导）\n"
+            "很好，接下来界定什么时候转人工。"
+            "（等待学员回复第2轮后，继续引导）\n"
+            "最后设计转接信息字段。"
+        )
+        result = assistant._single_turn_reply(scripted)
+        self.assertNotIn("等待学员回复", result)
+        self.assertNotIn("第2轮", result)
+        self.assertIn("高频问题", result)
+        # 正常单轮回复不被截断
+        normal = "建议先明确活动时间、地点和费用这三类高频问题，再界定转人工条件。"
+        self.assertEqual(assistant._single_turn_reply(normal), normal)
+
+    def test_real_model_prompts_require_single_turn_reply(self):
+        """回归：所有真实模型通道的系统/对话提示必须包含逐轮约束。"""
+        assistant = AIAssistant()
+        transcript = assistant._build_transcript(
+            {"question": "对话式任务：请与 AI 协作完成方案。要求：至少 3 轮有效对话。"}, [], "第一步怎么做？"
+        )
+        self.assertIn("逐轮", transcript)
+        self.assertIn("只回应当前这一轮", transcript)
+        self.assertIn("不要一次性输出多轮引导计划", transcript)
+
 
 class AiChatApiTests(unittest.TestCase):
     @classmethod

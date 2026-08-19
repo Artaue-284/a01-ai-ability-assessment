@@ -9,8 +9,9 @@ from typing import Any
 DIMENSIONS = ("basic", "prompt", "tools", "evaluation", "collaboration", "ethics")
 
 # 每场测评末尾固定追加的主观题型：开放作答 + 实操任务 + 对话式任务。
-# 题库含代码/图像题型时，可在题库管理后台扩展；引擎按可用性自动回退。
-TAIL_TYPES = (("open_text", 2), ("practical", 3), ("dialogue", 3))
+# 题库含代码/图像题型时自动纳入；题库缺少目标题型时引擎按可用性自动回退。
+# 15 题场只取前 3 类（客观题占比不变），18/25 题场完整纳入 5 类。
+TAIL_TYPES = (("open_text", 2), ("practical", 3), ("dialogue", 3), ("code", 3), ("image", 3))
 
 # 训练资源：用于在报告中给出可落地的学习与练习建议。
 TRAINING_RESOURCES = {
@@ -217,7 +218,7 @@ class AdaptiveTestEngine:
             raise ValueError("该题不是当前待答题目，或已经提交")
         question = self.by_id[question_id]
         max_score = float(question.get("max_score", question.get("score", 10)))
-        if question["type"] == "single_choice":
+        if question["type"] in ("single_choice", "true_false"):
             earned = max_score if answer == question.get("answer") else 0.0
             feedback = {"correct": earned == max_score, "correct_answer": question.get("answer")}
         else:

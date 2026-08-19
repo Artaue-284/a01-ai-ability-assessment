@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="560" viewBox="0 0 420 560">
+<rect width="420" height="560" fill="#fdf3e7"/>
+<rect x="30" y="30" width="360" height="500" rx="10" fill="#fff" stroke="#d8c3a5" stroke-width="4"/>
+<rect x="60" y="60" width="300" height="60" fill="#c96f4a"/>
+<text x="90" y="100" font-size="30" fill="#fff" font-family="sans-serif" font-weight="bold">AI 活动</text>
+<text x="90" y="132" font-size="20" fill="#8a6f55" font-family="sans-serif">AI 活劫</text>
+<text x="90" y="158" font-size="20" fill="#8a6f55" font-family="sans-serif">活动周</text>
+<circle cx="330" cy="250" r="70" fill="#5a8f7b"/>
+<circle cx="330" cy="250" r="45" fill="#7fb29a"/>
+<text x="120" y="300" font-size="18" fill="#5a4a3a" font-family="sans-serif">时间：3 月 12 日</text>
+<text x="120" y="330" font-size="18" fill="#5a4a3a" font-family="sans-serif">时间：3 月 21 日</text>
+<text x="120" y="380" font-size="16" fill="#a08a70" font-family="sans-serif">地点：报告厅 101</text>
+<text x="120" y="410" font-size="16" fill="#a08a70" font-family="sans-serif">地点：报厅 101</text>
+<text x="120" y="460" font-size="14" fill="#a08a70" font-family="sans-serif">欢迎扫码报名</text>
+</svg>

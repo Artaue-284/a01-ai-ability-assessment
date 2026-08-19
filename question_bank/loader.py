@@ -48,6 +48,10 @@ def load_all_questions() -> list[dict]:
         for path in paths:
             if path.exists():
                 questions.extend(json.loads(path.read_text(encoding="utf-8")))
+    # 批量扩充题库（300 题批次）放在 expansion/ 目录，按文件名排序加载。
+    expansion_dir = bank_dir / "expansion"
+    for path in sorted(expansion_dir.glob("*.json")):
+        questions.extend(json.loads(path.read_text(encoding="utf-8")))
     return normalize_questions(questions)
 
 
@@ -84,7 +88,7 @@ def validate_question_bank(questions: list[dict]) -> dict:
             warnings.append(f"题目 {question.get('id')} 缺少标签")
         if not question.get("explanation") or question.get("explanation") == "待教研审核补充解析":
             warnings.append(f"题目 {question.get('id')} 尚未补充解析")
-        if question.get("type") == "single_choice":
+        if question.get("type") in ("single_choice", "true_false"):
             if len(question.get("options", [])) < 2 or "answer" not in question:
                 errors.append(f"客观题 {question.get('id')} 缺少选项或答案")
         elif not question.get("rubric"):

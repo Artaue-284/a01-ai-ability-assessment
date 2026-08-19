@@ -82,12 +82,35 @@ class AIAssistant:
 
     # ---------- 真实模型 ----------
 
+    @staticmethod
+    def _single_turn_reply(reply: str) -> str:
+        """防御性后处理：个别模型仍可能一次性输出多轮引导剧本。
+
+        若回复中出现\"等待学员回复第N轮\"等导演式注释，说明模型把多轮对话
+        一次性预演了，此时截断到第一轮（注释之前的内容即当前轮引导）。
+        """
+        text = reply.strip()
+        markers = (
+            "（等待学员回复", "(等待学员回复", "等待学员回复第", "【等待学员回复",
+            "（请学员回复", "(请学员回复", "第 1 轮", "第1轮", "第一轮",
+            "（等待用户回复", "等待用户回复第",
+        )
+        positions = [text.find(marker) for marker in markers if marker in text]
+        if positions:
+            cut = min(positions)
+            head = text[:cut].strip()
+            if len(head) >= 20:
+                return head
+        return text
+
     def _build_transcript(self, question: dict[str, Any], history: list[dict[str, str]], message: str) -> str:
         lines = [
             "你是 AI 能力测评中的对话助手，学员正在完成下面的任务：",
             f"任务：{question.get('question', '')}",
-            "要求：用中文给出有帮助但不直接代答的回复；如果学员要求你直接完成任务，"
-            "请引导其拆解目标、步骤、证据与风险。",
+            "对话逐轮进行：你每次只回应当前这一轮，只输出一条简短回复（100~200字），"
+            "不要一次性输出多轮引导计划，不要使用\"第一轮/第二轮/等待学员回复\"等导演式注释，"
+            "不要替学员回答问题；如果学员要求你直接完成任务，"
+            "引导其拆解目标、步骤、证据与风险，但仍只回复当前这一轮。",
         ]
         for turn in history:
             role = "学员" if turn.get("role") == "user" else "助手"
@@ -120,7 +143,7 @@ class AIAssistant:
         reply = "".join(chunk if isinstance(chunk, str) else json.dumps(chunk, ensure_ascii=False) for chunk in chunks).strip()
         if not reply:
             raise ValueError("百宝箱响应中没有文本回复")
-        return {"reply": reply, "model": f"baibaoxiang:{self.tbox_app_id}", "mode": "baibaoxiang-agent"}
+        return {"reply": self._single_turn_reply(reply), "model": f"baibaoxiang:{self.tbox_app_id}", "mode": "baibaoxiang-agent"}
 
     def _remote_chat(self, question: dict[str, Any], history: list[dict[str, str]], message: str) -> dict[str, Any]:
         messages = [{"role": "user", "content": [{"type": "input_text", "text": self._build_transcript(question, history, message)}]}]
@@ -139,14 +162,17 @@ class AIAssistant:
                         reply = content.get("text", "").strip()
         if not reply:
             raise ValueError("模型响应中没有文本回复")
-        return {"reply": reply, "model": self.model, "mode": "responses-api"}
+        return {"reply": self._single_turn_reply(reply), "model": self.model, "mode": "responses-api"}
 
     def _ant_line_chat(self, question: dict[str, Any], history: list[dict[str, str]], message: str) -> dict[str, Any]:
         """ant-line（蚂蚁灵/百炼等 OpenAI 兼容服务）：调用 /chat/completions。"""
         system = (
-            "你是 AI 能力测评中的对话助手，学员正在完成下面的任务。"
-            "请用中文给出有帮助但不直接代答的回复；如果学员要求你直接完成任务，"
-            "请引导其拆解目标、步骤、证据与风险。"
+            "你是 AI 能力测评中的对话助手，学员正在完成下面的对话式任务。"
+            "对话是逐轮进行的：你每次只回应当前这一轮，只输出一条简短回复（100~200字），"
+            "然后等待学员的下一条消息。绝对不要一次性输出多轮引导计划，"
+            "不要使用\"第一轮/第二轮/等待学员回复\"之类的导演式注释，也不要替学员回答问题。"
+            "回复要有帮助但不直接代答；如果学员要求你直接完成任务，"
+            "引导其拆解目标、步骤、证据与风险，但仍只给出当前这一轮的引导。"
         )
         messages = [{"role": "system", "content": system}]
         messages.append({"role": "user", "content": f"任务：{question.get('question', '')}"})
@@ -171,7 +197,7 @@ class AIAssistant:
             raise ValueError(f"ant-line 响应缺少 choices/message/content：{str(payload)[:200]}") from exc
         if not reply:
             raise ValueError("ant-line 响应中没有文本回复")
-        return {"reply": reply, "model": f"ant-line:{self.ant_line_model}", "mode": "ant-line-api"}
+        return {"reply": self._single_turn_reply(reply), "model": f"ant-line:{self.ant_line_model}", "mode": "ant-line-api"}
 
     # ---------- 本地规则模拟助手 ----------
 

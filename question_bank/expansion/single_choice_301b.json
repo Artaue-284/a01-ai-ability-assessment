@@ -1,0 +1,1059 @@
+[
+  {
+    "id": "EV301",
+    "dimension": "evaluation",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "收到 AI 给出的统计数据时，第一步应当做什么？",
+    "options": [
+      "核对来源、统计口径与数据时间",
+      "直接引用到正式报告之中",
+      "直接删除掉来源信息内容",
+      "把数字结果进行四舍五入"
+    ],
+    "answer": "核对来源、统计口径与数据时间",
+    "answer_index": 0,
+    "explanation": "AI 可能编造数字或口径不清，先核验来源与口径再使用。",
+    "tags": [
+      "事实核验"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV302",
+    "dimension": "evaluation",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "AI 生成内容中出现“某研究表明…但未给出出处”，最合理的判断是？",
+    "options": [
+      "该结论必然是正确无误的",
+      "证据链不完整，需要补充来源后再采信",
+      "该结论一定是虚假错误的",
+      "与模型的版本毫无任何关系"
+    ],
+    "answer": "证据链不完整，需要补充来源后再采信",
+    "answer_index": 1,
+    "explanation": "无出处的结论缺乏可核验性，应要求补全来源或独立查证。",
+    "tags": [
+      "证据链"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV303",
+    "dimension": "evaluation",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "发现 AI 答案与自己的常识明显冲突时，恰当的做法是？",
+    "options": [
+      "无条件相信 AI",
+      "立即删除全部对话",
+      "停下来做交叉验证",
+      "忽略冲突继续追问"
+    ],
+    "answer": "停下来做交叉验证",
+    "answer_index": 2,
+    "explanation": "冲突是核验信号，应通过独立渠道确认事实。",
+    "tags": [
+      "交叉验证"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV304",
+    "dimension": "evaluation",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "把 AI 生成的法律条文直接用于合同，最可能的风险是？",
+    "options": [
+      "合同文件会变得更大一些",
+      "打印的速度会变得更加缓慢",
+      "律师无法正常地进行阅读",
+      "条文可能过时或被截断，造成法律误用"
+    ],
+    "answer": "条文可能过时或被截断，造成法律误用",
+    "answer_index": 3,
+    "explanation": "高风险领域内容必须由专业人员结合权威来源复核。",
+    "tags": [
+      "高风险内容"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV305",
+    "dimension": "evaluation",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "评估一篇 AI 生成文章的质量，最合理的维度组合是？",
+    "options": [
+      "事实准确性、结构完整性、表达清晰度",
+      "仅看字数多少的情况统计",
+      "仅看是否使用了成语修辞",
+      "仅看标点数量的多少情况"
+    ],
+    "answer": "事实准确性、结构完整性、表达清晰度",
+    "answer_index": 0,
+    "explanation": "质量评估应覆盖事实、结构与表达多个维度。",
+    "tags": [
+      "质量评估"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV306",
+    "dimension": "evaluation",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 在回答中加入“据某权威机构 2023 年报告”，但该机构名称拼写错误，说明？",
+    "options": [
+      "报告的内容一定是正确的",
+      "需要人工核验引用是否真实存在",
+      "说明模型更新的非常及时",
+      "与内容的整体质量毫无关系"
+    ],
+    "answer": "需要人工核验引用是否真实存在",
+    "answer_index": 1,
+    "explanation": "引用细节错误常提示来源可能被编造，应独立检索确认。",
+    "tags": [
+      "引用核验"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV307",
+    "dimension": "evaluation",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "同一问题反复问同一个模型得到不同答案，这说明？",
+    "options": [
+      "模型已经出现了损坏故障问题",
+      "账号已经被系统锁定无法使用",
+      "生成具有随机性，需要多次采样或降低温度",
+      "网络一定存在着问题故障情况"
+    ],
+    "answer": "生成具有随机性，需要多次采样或降低温度",
+    "answer_index": 2,
+    "explanation": "采样随机性导致结果波动，重要结论应多次验证或调参。",
+    "tags": [
+      "随机性"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV308",
+    "dimension": "evaluation",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 生成的代码通过编译但不符业务逻辑，最可能的原因与对策是？",
+    "options": [
+      "编译器本身存在着程序错误与 bug",
+      "代码内容编写得实在是太长了一些",
+      "需要更换一台新的电脑设备才行",
+      "只验证了语法没验证语义，应补充业务用例测试"
+    ],
+    "answer": "只验证了语法没验证语义，应补充业务用例测试",
+    "answer_index": 3,
+    "explanation": "能编译不代表正确，必须用覆盖业务规则的测试用例验证行为。",
+    "tags": [
+      "代码核验"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV309",
+    "dimension": "evaluation",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "把 AI 生成的答案与人工答案做对比评估，最科学的做法是？",
+    "options": [
+      "用统一评分量表由多名评阅人独立打分",
+      "只看看谁的字数更多一些",
+      "让 AI 自己宣布最终获胜",
+      "比较回答的长度多少情况"
+    ],
+    "answer": "用统一评分量表由多名评阅人独立打分",
+    "answer_index": 0,
+    "explanation": "统一量表与多评阅人可降低主观偏差，得到可靠对比结论。",
+    "tags": [
+      "评分对比"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV310",
+    "dimension": "evaluation",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 摘要漏掉了报告中的关键免责声明，最合适的补救是？",
+    "options": [
+      "直接忽略掉免责声明内容",
+      "人工复核摘要是否保留关键限定语",
+      "把摘要内容加长一倍长度",
+      "删除掉原文的整篇内容"
+    ],
+    "answer": "人工复核摘要是否保留关键限定语",
+    "answer_index": 1,
+    "explanation": "摘要可能丢失限定语导致含义改变，交付前需检查关键信息完整性。",
+    "tags": [
+      "摘要核验"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV311",
+    "dimension": "evaluation",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "发现某道 AI 生成的题目答案位置总在 A，最合理的质量处理是？",
+    "options": [
+      "保持原有的状态完全不动",
+      "直接删除掉所有的 A 选项",
+      "打乱答案位置分布并重新校验",
+      "把答案全部都改成 D 选项"
+    ],
+    "answer": "打乱答案位置分布并重新校验",
+    "answer_index": 2,
+    "explanation": "答案位置偏斜会产生位置线索，应均衡分布并做结构校验。",
+    "tags": [
+      "选项均衡"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV312",
+    "dimension": "evaluation",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "要建立一套评估 AI 客服回答质量的标准，正确的流程是？",
+    "options": [
+      "直接凭个人感觉来进行打星评价的工作",
+      "统计回答内容的字数多少情况说明报告",
+      "比较响应所花费的耗时时间长短情况",
+      "定义指标→抽样→多评人评分→计算一致性与差异分析"
+    ],
+    "answer": "定义指标→抽样→多评人评分→计算一致性与差异分析",
+    "answer_index": 3,
+    "explanation": "标准评估流程保证可重复、可追溯，一致性指标用于校验评分可靠性。",
+    "tags": [
+      "评估体系"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV313",
+    "dimension": "evaluation",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "模型在 A 组测试表现好、在 B 组明显变差，最可能的原因是什么？",
+    "options": [
+      "测试集分布差异导致泛化不足",
+      "B 组样本一定是脏数据",
+      "模型的温度参数设置太高",
+      "与提示词的内容完全无关"
+    ],
+    "answer": "测试集分布差异导致泛化不足",
+    "answer_index": 0,
+    "explanation": "跨组表现波动提示模型过拟合特定分布，需要扩充多样样本验证。",
+    "tags": [
+      "泛化"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV314",
+    "dimension": "evaluation",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "AI 生成的舆情分析结论若被用于公开报告，除准确外还必须满足？",
+    "options": [
+      "结论要足够地震撼到人心的深处",
+      "可追溯（样本、方法、时间）与合规审查",
+      "字数要超过一万字以上才可以发布",
+      "不出现任何图表的展示内容形式"
+    ],
+    "answer": "可追溯（样本、方法、时间）与合规审查",
+    "answer_index": 1,
+    "explanation": "对外结论要有方法学可追溯性并经过合规审查，避免误导与责任风险。",
+    "tags": [
+      "可追溯"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV315",
+    "dimension": "evaluation",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "人工复核与 AI 评分结果经常不一致，为提升评分可靠性应优先？",
+    "options": [
+      "直接采用 AI 给出的最终评分分数",
+      "直接取消掉人工复核的流程环节",
+      "细化评分量表、增加锚定示例并培训评阅人",
+      "增加题目的总数量多少的情况"
+    ],
+    "answer": "细化评分量表、增加锚定示例并培训评阅人",
+    "answer_index": 2,
+    "explanation": "评分分歧多源于标准不统一，明确量表与示例能收敛评分差异。",
+    "tags": [
+      "评分一致性"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "EV316",
+    "dimension": "evaluation",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "对 AI 生成内容建立持续质量监控，最关键的机制是？",
+    "options": [
+      "只在新版本发布时检查一次即可",
+      "直接删除掉所有的用户反馈内容",
+      "完全禁止用户进行任何形式的提问",
+      "抽样人工复核 + 自动化指标 + 反馈闭环"
+    ],
+    "answer": "抽样人工复核 + 自动化指标 + 反馈闭环",
+    "answer_index": 3,
+    "explanation": "持续监控依赖抽样复核、量化指标与问题反馈的闭环迭代。",
+    "tags": [
+      "质量监控"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO301",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "把“由 AI 生成初稿、人工负责审核定稿”的分工方式称为？",
+    "options": [
+      "人机协同",
+      "全自动操作",
+      "纯手工流程",
+      "模型微调"
+    ],
+    "answer": "人机协同",
+    "answer_index": 0,
+    "explanation": "人机协同强调人与 AI 各司其职，关键节点由人把关。",
+    "tags": [
+      "人机协同"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO302",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "AI 输出结果用于正式对外发布前，应当设置什么环节？",
+    "options": [
+      "随机删除部分内容",
+      "人工确认与审批节点",
+      "自动转发全部内容",
+      "跳过所有的检查环节"
+    ],
+    "answer": "人工确认与审批节点",
+    "answer_index": 1,
+    "explanation": "对外发布属于高风险节点，必须设置人工审批。",
+    "tags": [
+      "检查点"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO303",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "AI 在任务中途给出与目标不符的中间结果，此时应？",
+    "options": [
+      "继续执行下去不管最终结果",
+      "直接放弃掉整个的任务目标",
+      "暂停并复核目标与输入，必要时人工介入",
+      "删除掉中间的记录数据内容"
+    ],
+    "answer": "暂停并复核目标与输入，必要时人工介入",
+    "answer_index": 2,
+    "explanation": "异常中间结果要及时叫停检查，防止错误被放大。",
+    "tags": [
+      "异常处理"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO304",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "团队引入 AI 辅助写作时，最合适的边界约定是？",
+    "options": [
+      "直接禁止所有人使用 AI 工具进行服务",
+      "允许 AI 全权代写全部的内容文件材料",
+      "完全不设置任何的使用规则要求规范",
+      "明确哪些环节用 AI、哪些必须人工、如何标注"
+    ],
+    "answer": "明确哪些环节用 AI、哪些必须人工、如何标注",
+    "answer_index": 3,
+    "explanation": "清晰的边界与标注规则能让协作透明、可追责。",
+    "tags": [
+      "协作边界"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO305",
+    "dimension": "collaboration",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "把“数据清洗、报表生成、结论撰写”合理分配给人与 AI，恰当的分法是？",
+    "options": [
+      "重复机械的清洗与初稿交给 AI，分析与决策由人负责",
+      "全部直接交给 AI 来进行全权的处理工作内容",
+      "全部由人工来完成所有的工作任务安排",
+      "让 AI 来负责最终的决策工作任务安排"
+    ],
+    "answer": "重复机械的清洗与初稿交给 AI，分析与决策由人负责",
+    "answer_index": 0,
+    "explanation": "按任务性质分工：机器擅长重复执行，人负责判断与责任。",
+    "tags": [
+      "分工"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO306",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 自动化流程处理用户退款申请，正确的风险控制设计是？",
+    "options": [
+      "全部自动地进行退款操作",
+      "金额超限或规则冲突时转人工处理",
+      "直接拒绝所有的退款申请",
+      "不记录任何处理日志信息"
+    ],
+    "answer": "金额超限或规则冲突时转人工处理",
+    "answer_index": 1,
+    "explanation": "高风险分支必须升级到人工，并保留完整日志。",
+    "tags": [
+      "风控"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO307",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 生成的方案里遗漏了人工确认节点，作为负责人你应当？",
+    "options": [
+      "照单全部接收下来进行处理",
+      "一味地去责怪模型的系统",
+      "补充关键决策点的人工确认与审批",
+      "删除掉整个的方案内容文件"
+    ],
+    "answer": "补充关键决策点的人工确认与审批",
+    "answer_index": 2,
+    "explanation": "人的价值体现在补充监督与责任节点，而非机械执行模型输出。",
+    "tags": [
+      "确认节点"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO308",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 助手在对话中多次给出自相矛盾的建议，合理的应对是？",
+    "options": [
+      "随意采纳最后的某一条建议",
+      "假装完全没有看见这些矛盾",
+      "直接关闭掉整个系统程序",
+      "记录矛盾点，要求澄清并交叉核验"
+    ],
+    "answer": "记录矛盾点，要求澄清并交叉核验",
+    "answer_index": 3,
+    "explanation": "矛盾建议需澄清来源与依据，必要时引入人工判断。",
+    "tags": [
+      "矛盾处理"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO309",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "“AI 负责信息收集与初筛，人负责最终面试决策”属于什么模式？",
+    "options": [
+      "AI 辅助决策、人保留最终判断",
+      "完全自动化的决策处理方式",
+      "直接淘汰掉所有的候选人名单",
+      "随机抽签来进行最终的决定"
+    ],
+    "answer": "AI 辅助决策、人保留最终判断",
+    "answer_index": 0,
+    "explanation": "涉及人的重大决策应保留人工最终判断，AI 仅提供参考。",
+    "tags": [
+      "辅助决策"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO310",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "让 AI 帮忙写代码时，最有效的人机协作方式是？",
+    "options": [
+      "一次就要求生成整个系统的全部代码",
+      "先说明目标与约束，再逐步让 AI 生成并逐段审阅",
+      "完全复制粘贴而不进行任何代码的审阅",
+      "让 AI 直接上线运行并投入正式的运行使用"
+    ],
+    "answer": "先说明目标与约束，再逐步让 AI 生成并逐段审阅",
+    "answer_index": 1,
+    "explanation": "渐进式协作降低错误放大风险，审阅是协作的必要环节。",
+    "tags": [
+      "编码协作"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO311",
+    "dimension": "collaboration",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 自动化流程上线前，团队最应完成的是？",
+    "options": [
+      "直接进行全量的上线发布",
+      "直接删除掉测试的环境配置",
+      "灰度测试、回滚预案与监控告警",
+      "直接关闭日志的记录功能设置"
+    ],
+    "answer": "灰度测试、回滚预案与监控告警",
+    "answer_index": 2,
+    "explanation": "上线前准备灰度与回滚机制，可把风险控制在可恢复范围。",
+    "tags": [
+      "上线管控"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO312",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "设计人机协同流程时，“人在回路”（human-in-the-loop）的核心含义是？",
+    "options": [
+      "人完全退出整个流程环节",
+      "机器必须征求每个字的意见",
+      "只保留一个简单的操作按钮",
+      "关键节点保留人工审核与干预能力"
+    ],
+    "answer": "关键节点保留人工审核与干预能力",
+    "answer_index": 3,
+    "explanation": "人在回路确保高风险或异常场景可被人工接管。",
+    "tags": [
+      "人在回路"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO313",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "AI 处理大量客服工单时，用于持续改进协作质量的机制是？",
+    "options": [
+      "用户满意度回访 + 错例复盘 + 规则更新",
+      "只统计处理完成的数量多少情况",
+      "直接删除掉差评工单的记录内容",
+      "直接忽略掉用户反馈的意见内容"
+    ],
+    "answer": "用户满意度回访 + 错例复盘 + 规则更新",
+    "answer_index": 0,
+    "explanation": "反馈闭环让协作质量持续上升，而非停留在一次性上线。",
+    "tags": [
+      "持续改进"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO314",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "人机协同中“责任归属”最关键的原则是？",
+    "options": [
+      "责任全部归 AI 来进行承担",
+      "最终责任由组织与人员承担，AI 是工具",
+      "责任归软件供应商来进行承担",
+      "完全不设置责任的主体对象"
+    ],
+    "answer": "最终责任由组织与人员承担，AI 是工具",
+    "answer_index": 1,
+    "explanation": "AI 输出由使用者负责审校与采纳，责任不能推给模型。",
+    "tags": [
+      "责任归属"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO315",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "跨部门共建 AI 工作流时，最容易导致返工的原因是？",
+    "options": [
+      "会议室的数量太少不够正常使用",
+      "同事的打字速度实在是太慢了一些",
+      "各部门目标、数据口径与验收标准不一致",
+      "网络的带宽明显不足够正常使用"
+    ],
+    "answer": "各部门目标、数据口径与验收标准不一致",
+    "answer_index": 2,
+    "explanation": "先统一目标、口径与验收标准，再建设流程可避免返工。",
+    "tags": [
+      "协作治理"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "CO316",
+    "dimension": "collaboration",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "为保障人机协同流程可审计，系统至少应记录？",
+    "options": [
+      "仅记录登录的密码信息即可",
+      "员工的工资信息数据内容",
+      "无关的聊天记录内容信息",
+      "输入、模型输出、人工操作与决策依据"
+    ],
+    "answer": "输入、模型输出、人工操作与决策依据",
+    "answer_index": 3,
+    "explanation": "审计日志覆盖输入输出与人工干预，才能事后追溯与定责。",
+    "tags": [
+      "审计"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET301",
+    "dimension": "ethics",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "把含姓名、电话的客户名单直接上传到公共 AI 工具，主要风险是？",
+    "options": [
+      "个人信息泄露与用途失控",
+      "文件格式会出现错误问题",
+      "图片的清晰度明显不够清晰",
+      "回复的速度会变得非常缓慢"
+    ],
+    "answer": "个人信息泄露与用途失控",
+    "answer_index": 0,
+    "explanation": "个人信息上传前应脱敏并确认工具的数据处理条款。",
+    "tags": [
+      "隐私"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET302",
+    "dimension": "ethics",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "使用 AI 生成的论文段落不标注来源，属于什么行为？",
+    "options": [
+      "属于正常的引用行为",
+      "学术不端与侵权风险",
+      "提高写作效率的合规做法",
+      "与版权的问题完全无关"
+    ],
+    "answer": "学术不端与侵权风险",
+    "answer_index": 1,
+    "explanation": "AI 生成内容同样需要披露与引用管理，避免抄袭与侵权。",
+    "tags": [
+      "版权",
+      "学术诚信"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET303",
+    "dimension": "ethics",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "AI 生成的个人照片用于商业广告前，必须确认？",
+    "options": [
+      "照片的分辨率参数",
+      "文件的大小参数设置",
+      "肖像权与使用授权",
+      "色彩的饱和度参数"
+    ],
+    "answer": "肖像权与使用授权",
+    "answer_index": 2,
+    "explanation": "涉及真实人物形象的内容须获得授权，避免侵权。",
+    "tags": [
+      "肖像权"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET304",
+    "dimension": "ethics",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "收集学员数据用于 AI 能力分析时，最基础的合规动作是？",
+    "options": [
+      "尽可能收集更多的数据内容",
+      "不告知学员本人的任何信息",
+      "永久保存所有的数据内容",
+      "告知用途并取得同意、遵循最小必要"
+    ],
+    "answer": "告知用途并取得同意、遵循最小必要",
+    "answer_index": 3,
+    "explanation": "数据收集以知情同意与最小必要为前提。",
+    "tags": [
+      "知情同意"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET305",
+    "dimension": "ethics",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "AI 根据历史数据推荐培训课程，如果历史数据中某群体样本极少，可能带来？",
+    "options": [
+      "算法偏见导致推荐不公",
+      "课程的价格变得昂贵",
+      "网络的速度变得缓慢",
+      "页面的外观变得丑陋"
+    ],
+    "answer": "算法偏见导致推荐不公",
+    "answer_index": 0,
+    "explanation": "样本不均衡会让模型对少数群体产生系统性偏差。",
+    "tags": [
+      "算法偏见"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET306",
+    "dimension": "ethics",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "发现训练数据包含他人受版权保护的内容，正确的处理方式是？",
+    "options": [
+      "直接忽略掉该问题的所有相关内容",
+      "确认授权或移除侵权内容，保留使用记录",
+      "把作者的名字信息直接删除处理掉",
+      "对数据进行加密压缩处理操作"
+    ],
+    "answer": "确认授权或移除侵权内容，保留使用记录",
+    "answer_index": 1,
+    "explanation": "版权内容使用需授权或去除，并保留合规记录。",
+    "tags": [
+      "版权合规"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET307",
+    "dimension": "ethics",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "给 AI 系统设定“不得生成诱导用户自残的内容”属于哪类设计？",
+    "options": [
+      "提高整体的算力水平",
+      "美化整体的界面设计",
+      "安全护栏与伦理约束",
+      "加速模型的训练过程"
+    ],
+    "answer": "安全护栏与伦理约束",
+    "answer_index": 2,
+    "explanation": "安全护栏把伦理边界编码进系统行为，保护脆弱用户。",
+    "tags": [
+      "安全护栏"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET308",
+    "dimension": "ethics",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 测评系统应如何避免“分数决定一切”的过度使用风险？",
+    "options": [
+      "分数直接用于淘汰的处理",
+      "隐藏所有的分数信息数据",
+      "禁止学员查看报告的全部内容",
+      "结果仅作参考并配套人工复核与申诉"
+    ],
+    "answer": "结果仅作参考并配套人工复核与申诉",
+    "answer_index": 3,
+    "explanation": "高利害场景需要人工复核与申诉通道，防止机械决策。",
+    "tags": [
+      "测评伦理"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET309",
+    "dimension": "ethics",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "把 AI 生成的医疗建议直接转发给患者，最关键的合规问题是？",
+    "options": [
+      "医疗建议需具备资质的专业人员审核",
+      "字体的字号太小看不清楚",
+      "回答的内容实在是太过冗长了",
+      "文件的体积实在是太过庞大了"
+    ],
+    "answer": "医疗建议需具备资质的专业人员审核",
+    "answer_index": 0,
+    "explanation": "医疗等专业领域输出必须由持证人员把关。",
+    "tags": [
+      "专业领域"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET310",
+    "dimension": "ethics",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 服务商要删除用户数据时，应遵循的原则是？",
+    "options": [
+      "永远不删除任何的数据内容记录",
+      "按约定期限与用户请求删除并留存删除记录",
+      "随机删除部分的数据内容记录",
+      "删除后不告知用户本人的信息情况"
+    ],
+    "answer": "按约定期限与用户请求删除并留存删除记录",
+    "answer_index": 1,
+    "explanation": "数据删除权是个人信息保护的基本要求。",
+    "tags": [
+      "删除权"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET311",
+    "dimension": "ethics",
+    "difficulty": 2,
+    "type": "single_choice",
+    "question": "AI 生成深度伪造视频用于恶搞同事，主要触犯？",
+    "options": [
+      "著作权中的合理引用",
+      "商业秘密的保护制度",
+      "名誉权与个人信息保护",
+      "网络安全法关于日志的要求"
+    ],
+    "answer": "名誉权与个人信息保护",
+    "answer_index": 2,
+    "explanation": "未经同意的深度伪造侵害他人名誉与肖像权益。",
+    "tags": [
+      "深度伪造"
+    ],
+    "ability_level": "L3",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET312",
+    "dimension": "ethics",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "AI 系统上线前进行“影响评估”主要考察？",
+    "options": [
+      "页面的加载速度情况指标分析",
+      "员工的考勤记录数据情况统计",
+      "服务器的数量情况统计指标数据",
+      "对个人与群体的潜在风险、偏见与救济措施"
+    ],
+    "answer": "对个人与群体的潜在风险、偏见与救济措施",
+    "answer_index": 3,
+    "explanation": "影响评估是负责任 AI 治理的关键步骤，聚焦风险与救济。",
+    "tags": [
+      "影响评估"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET313",
+    "dimension": "ethics",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "AI 系统在少数民族语言上效果明显更差，正确的治理动作是？",
+    "options": [
+      "补充多样数据、评估偏差并披露局限",
+      "直接忽略掉差异的问题所在",
+      "直接禁止少数民族用户继续使用",
+      "只修改界面的文案内容文字"
+    ],
+    "answer": "补充多样数据、评估偏差并披露局限",
+    "answer_index": 0,
+    "explanation": "应通过数据、评估与披露来缩小群体差异。",
+    "tags": [
+      "公平性"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET314",
+    "dimension": "ethics",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "AI 辅助招聘中，为规避“算法歧视”，最关键的措施是？",
+    "options": [
+      "直接删除掉所有的简历文件内容",
+      "审计模型对各群体的公平性并设置人工复核",
+      "只使用 AI 进行最终的决策处理",
+      "不记录招聘的过程信息内容数据"
+    ],
+    "answer": "审计模型对各群体的公平性并设置人工复核",
+    "answer_index": 1,
+    "explanation": "招聘属高利害场景，必须做公平性审计并保留人工决策。",
+    "tags": [
+      "招聘公平"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET315",
+    "dimension": "ethics",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "建立 AI 数据治理制度时，应当覆盖哪些环节？",
+    "options": [
+      "只覆盖采集环节的具体内容部分",
+      "只覆盖存储环节的具体内容部分",
+      "采集、存储、使用、共享、留存与销毁全周期",
+      "只覆盖展示环节的具体内容部分"
+    ],
+    "answer": "采集、存储、使用、共享、留存与销毁全周期",
+    "answer_index": 2,
+    "explanation": "全生命周期治理才能落实最小化、授权与可删除等要求。",
+    "tags": [
+      "数据治理"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  },
+  {
+    "id": "ET316",
+    "dimension": "ethics",
+    "difficulty": 3,
+    "type": "single_choice",
+    "question": "AI 系统造成用户损失时，“可解释性”对责任认定的价值是？",
+    "options": [
+      "让系统显得更加高级一些的层次",
+      "增加页面整体的复杂度水平数值",
+      "缩短回答的时间长度数值指标",
+      "帮助还原决策过程与依据，支持定责与改进"
+    ],
+    "answer": "帮助还原决策过程与依据，支持定责与改进",
+    "answer_index": 3,
+    "explanation": "可解释性为追溯、定责与修复提供事实基础。",
+    "tags": [
+      "可解释性"
+    ],
+    "ability_level": "L4",
+    "discrimination": 1.0,
+    "max_score": 10
+  }
+]

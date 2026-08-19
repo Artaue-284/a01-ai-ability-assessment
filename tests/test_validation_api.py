@@ -35,7 +35,7 @@ class ValidationApiTests(unittest.TestCase):
         payload = response.json()
         self.assertIn("valid", payload)
         self.assertIn("total", payload)
-        self.assertGreaterEqual(payload["total"], 90)
+        self.assertGreaterEqual(payload["total"], 300)
         self.assertIn("assessment_readiness", payload)
         self.assertIn("item_statistics", payload)
 
