@@ -20,6 +20,7 @@ docs/synthetic_validation_100/*.db
 # Unit-test isolated runtime database and scratch probes
 .test_runtime/
 .tmp_test/
+.tmp_pip/
 .sim_probe/
 .probe_db.py
 .list_db.py
