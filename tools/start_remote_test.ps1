@@ -11,8 +11,8 @@ try {
     exit 1
 }
 
-# Quick Tunnel 域名每次都会变化。先用一个模拟域名检查当前 Python
-# 进程是否允许 *.trycloudflare.com，避免隧道创建成功后网页却返回 400。
+# Quick Tunnel hostnames rotate on every launch. Probe the running Python
+# process before creating a tunnel so an obsolete allowlist fails clearly.
 try {
     Invoke-WebRequest -UseBasicParsing -Uri $localUrl -Headers @{ Host = 'a01-check.trycloudflare.com' } -TimeoutSec 4 | Out-Null
 } catch {
