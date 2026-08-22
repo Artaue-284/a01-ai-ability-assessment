@@ -19,6 +19,25 @@ from tools.simulate_balanced_cohort import (
 )
 
 
+def seed_demo_accounts(teacher_password: str, enterprise_password: str) -> dict:
+    if len(teacher_password) < 12 or len(enterprise_password) < 12:
+        raise ValueError("演示角色密码必须至少 12 位")
+    specs = [
+        ("teacher", "teacher_review_a", teacher_password, "教师评审A", "教学评审组"),
+        ("teacher", "teacher_review_b", teacher_password, "教师评审B", "教学评审组"),
+        ("teacher", "teacher_review_c", teacher_password, "教师裁决C", "教学评审组"),
+        ("enterprise", "enterprise_demo_a", enterprise_password, "企业代表A", "校企合作单位"),
+        ("enterprise", "enterprise_demo_b", enterprise_password, "企业代表B", "校企合作单位"),
+    ]
+    created = 0
+    from backend.database import create_account, get_account_by_username
+    for role, username, password, display_name, org_name in specs:
+        if get_account_by_username(username) is None:
+            create_account(role, username, password, display_name, org_name)
+            created += 1
+    return {"created": created, "total": len(specs)}
+
+
 def seed_demo_responses(count: int = 100, target_questions: int = 25, seed: int = 20260822) -> dict:
     if not 1 <= count <= 500:
         raise ValueError("count must be between 1 and 500")

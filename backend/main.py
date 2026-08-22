@@ -363,8 +363,12 @@ def get_engine(test_id: str) -> tuple[AdaptiveTestEngine, object]:
 def startup() -> None:
     init_db(SEED_QUESTIONS)
     if os.getenv("A01_LOAD_DEMO_DATA", "0") == "1":
-        from tools.load_demo_responses import seed_demo_responses
+        from tools.load_demo_responses import seed_demo_accounts, seed_demo_responses
         seed_demo_responses(count=100, target_questions=25)
+        teacher_password = os.getenv("A01_DEMO_TEACHER_PASSWORD", "")
+        enterprise_password = os.getenv("A01_DEMO_ENTERPRISE_PASSWORD", "")
+        if teacher_password and enterprise_password:
+            seed_demo_accounts(teacher_password, enterprise_password)
 
 
 @app.get("/")

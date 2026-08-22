@@ -15,6 +15,10 @@ services:
         value: "1"
       - key: A01_LOAD_DEMO_DATA
         value: "1"
+      - key: A01_DEMO_TEACHER_PASSWORD
+        sync: false
+      - key: A01_DEMO_ENTERPRISE_PASSWORD
+        sync: false
       - key: A01_ALLOWED_HOSTS
         sync: false
       - key: PORT
