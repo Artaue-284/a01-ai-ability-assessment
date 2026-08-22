@@ -10,6 +10,9 @@ import re
 import secrets
 import sys
 import uuid
+import time
+from collections import defaultdict, deque
+from threading import Lock
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -29,18 +32,23 @@ from backend.database import (
     create_position, create_session, create_test, dashboard_data, delete_session, export_rows,
     get_position, init_db, latest_completed_scores, latest_completed_test_id, list_accounts,
     list_positions, list_question_items, load_test, anonymous_enterprise_overview,
-    ai_chat_turns, count_ai_chat_turns, dialogue_turns, evidence_files, feedback_rows,
+    ai_chat_turns, count_ai_chat_turns, dialogue_turns, evidence_files, evidence_analysis_context, feedback_rows,
+    get_evidence_file,
     list_job_templates, position_applications, reset_account_password, resolve_session,
     save_ai_chat_turn, save_dialogue_turn, save_evidence_file, save_job_template,
     pending_review_answers, question_statistics, question_versions, resolve_review,
     review_records, save_answer, save_human_review, save_question_item, save_state,
     set_account_enabled, set_job_match_consent, set_job_template_enabled,
+    save_evidence_analysis, save_practical_run, practical_runs, practical_run_context,
     set_position_status, set_question_enabled, student_list, user_applications,
     test_answers, upsert_user, user_history, save_test_feedback,
 )
 from backend.analytics import review_metrics
 from backend.enterprise import ROLE_PERMISSIONS, build_dialogue_guidance, score_job_matches
 from llm.chat import AIAssistant
+from llm.multimodal import MultimodalAnalyzer
+from llm.practical_agent import PracticalAgent
+from llm.question_generator import TBoxQuestionGenerator
 from llm.scorer import LLMScorer
 from question_bank.loader import assessment_readiness, load_all_questions, validate_question_bank
 
@@ -52,6 +60,9 @@ def all_questions() -> list[dict]:
 SEED_QUESTIONS = all_questions()
 SCORER = LLMScorer()
 AI_ASSISTANT = AIAssistant()
+MULTIMODAL_ANALYZER = MultimodalAnalyzer()
+PRACTICAL_AGENT = PracticalAgent()
+QUESTION_GENERATOR = TBoxQuestionGenerator()
 ABILITY_STANDARDS = json.loads((ROOT / "question_bank" / "ability_standards.json").read_text(encoding="utf-8"))
 
 ADMIN_KEY_FILE = ROOT / "data" / "admin_key.txt"
@@ -106,14 +117,30 @@ allowed_hosts = [item.strip() for item in os.getenv("A01_ALLOWED_HOSTS", "").spl
 if allowed_hosts:
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
 app.mount("/static", StaticFiles(directory=ROOT / "frontend"), name="static")
+AUTH_ATTEMPTS: dict[str, deque[float]] = defaultdict(deque)
+AUTH_ATTEMPTS_LOCK = Lock()
 
 
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
+    if request.url.path == "/api/auth/login":
+        client = request.client.host if request.client else "unknown"
+        now = time.monotonic()
+        with AUTH_ATTEMPTS_LOCK:
+            attempts = AUTH_ATTEMPTS[client]
+            while attempts and now - attempts[0] > 300:
+                attempts.popleft()
+            if len(attempts) >= 10:
+                return StreamingResponse(iter([b'{"detail":"login rate limit exceeded"}']), status_code=429, media_type="application/json", headers={"Retry-After": "300"})
+            attempts.append(now)
     response = await call_next(request)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("X-Frame-Options", "DENY")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()")
+    response.headers.setdefault("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'")
+    if request.url.path.startswith("/api/"):
+        response.headers.setdefault("Cache-Control", "no-store")
     if os.getenv("A01_PUBLIC_MODE", "0") == "1":
         response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
     return response
@@ -172,6 +199,12 @@ class QuestionImportRequest(BaseModel):
     items: list[QuestionRequest]
 
 
+class QuestionDraftRequest(BaseModel):
+    dimension: str
+    question_type: str
+    difficulty: int = Field(ge=1, le=5)
+
+
 class TestFeedbackRequest(BaseModel):
     test_id: str
     rating: int = Field(ge=1, le=5)
@@ -211,6 +244,12 @@ class AiChatRequest(BaseModel):
     test_id: str
     question_id: str
     message: str = Field(min_length=2, max_length=2000)
+
+
+class PracticalRunRequest(BaseModel):
+    test_id: str
+    question_id: str
+    instruction: str = Field(min_length=2, max_length=2000)
 
 
 class LoginRequest(BaseModel):
@@ -323,6 +362,9 @@ def get_engine(test_id: str) -> tuple[AdaptiveTestEngine, object]:
 @app.on_event("startup")
 def startup() -> None:
     init_db(SEED_QUESTIONS)
+    if os.getenv("A01_LOAD_DEMO_DATA", "0") == "1":
+        from tools.load_demo_responses import seed_demo_responses
+        seed_demo_responses(count=100, target_questions=25)
 
 
 @app.get("/")
@@ -343,6 +385,11 @@ def status():
         "baibaoxiang": "configured" if SCORER.tbox_configured else "not-configured",
         "ant_line": "configured" if SCORER.ant_line_configured else "not-configured",
         "ai_assistant_mode": AI_ASSISTANT.mode,
+        "multimodal": {
+            "document_analysis": "configured" if MULTIMODAL_ANALYZER.text_configured else "local-extraction-only",
+            "vision_analysis": "configured" if MULTIMODAL_ANALYZER.vision_configured else "not-configured",
+        },
+        "practical_agent": "configured" if PRACTICAL_AGENT.configured else "not-configured",
     }
 
 
@@ -689,6 +736,58 @@ def test_evidence(test_id: str, question_id: str | None = None):
     return {"items": evidence_files(test_id, question_id)}
 
 
+@app.post("/api/evidence/{evidence_id}/analyze")
+def analyze_evidence(evidence_id: str):
+    item = get_evidence_file(evidence_id)
+    if item is None:
+        raise HTTPException(404, "证据文件不存在")
+    question = question_index().get(item["question_id"])
+    if question is None:
+        raise HTTPException(404, "题目不存在")
+    path = (ROOT / item["storage_path"]).resolve()
+    evidence_root = (ROOT / "data" / "evidence").resolve()
+    if evidence_root not in path.parents or not path.is_file():
+        raise HTTPException(409, "证据存储路径无效")
+    try:
+        result = MULTIMODAL_ANALYZER.analyze(path, item["media_type"], question)
+        return save_evidence_analysis(evidence_id, result)
+    except (ValueError, OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(422, f"证据解析失败：{exc}") from exc
+    except Exception as exc:
+        raise HTTPException(502, f"证据模型分析失败：{type(exc).__name__}: {str(exc)[:200]}") from exc
+
+
+@app.post("/api/practical/run")
+def run_practical(request: PracticalRunRequest):
+    row = load_test(request.test_id)
+    if row is None:
+        raise HTTPException(404, "测评不存在")
+    if row["status"] == "completed":
+        raise HTTPException(409, "测评已完成，不能继续实操")
+    question = question_index().get(request.question_id)
+    if question is None:
+        raise HTTPException(404, "题目不存在")
+    if question["type"] not in {"practical", "code", "open_text"}:
+        raise HTTPException(422, "本题不支持受控实操")
+    if len(practical_runs(request.test_id, request.question_id)) >= 3:
+        raise HTTPException(409, "本题受控实操已达 3 次上限")
+    try:
+        result = PRACTICAL_AGENT.run(question, request.instruction, evidence_files(request.test_id, request.question_id))
+        return save_practical_run({"id": str(uuid.uuid4()), "test_id": request.test_id,
+            "question_id": request.question_id, "instruction": request.instruction, **result})
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(422, str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(502, f"实操 Agent 调用失败：{type(exc).__name__}: {str(exc)[:160]}") from exc
+
+
+@app.get("/api/test/{test_id}/practical/{question_id}")
+def test_practical_runs(test_id: str, question_id: str):
+    if load_test(test_id) is None:
+        raise HTTPException(404, "测评不存在")
+    return {"items": practical_runs(test_id, question_id), "limit": 3}
+
+
 @app.get("/api/ability-standards")
 def ability_standards():
     return ABILITY_STANDARDS
@@ -776,6 +875,12 @@ def submit_answer(request: AnswerRequest):
             f"{'学员' if turn['role'] == 'user' else 'AI助手'}：{turn['message']}"
             for turn in ai_chat_turns(request.test_id, request.question_id)
         )
+        evidence_context = evidence_analysis_context(request.test_id, request.question_id)
+        if evidence_context:
+            transcript = f"{transcript}\n{evidence_context}".strip()
+        practical_context = practical_run_context(request.test_id, request.question_id)
+        if practical_context:
+            transcript = f"{transcript}\n{practical_context}".strip()
         open_score = SCORER.score(question, request.answer, context=transcript)
     try:
         result = engine.submit_answer(request.question_id, request.answer, request.elapsed_seconds, open_score)
@@ -906,6 +1011,17 @@ def admin_questions(include_disabled: bool = True):
     stats = {row["question_id"]: row for row in question_statistics()}
     items = list_question_items(include_disabled=include_disabled)
     return {"items": [{**item, "statistics": stats.get(item["id"])} for item in items]}
+
+
+@app.post("/api/admin/questions/draft", dependencies=[Depends(require_admin)])
+def admin_question_draft(request: QuestionDraftRequest):
+    try:
+        item = QUESTION_GENERATOR.generate(request.dimension, request.question_type, request.difficulty, 1)[0]
+        return {"draft": item, "notice": "草稿尚未入库，必须由教师编辑确认后保存。"}
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(422, str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(502, f"题库草稿生成失败：{type(exc).__name__}: {str(exc)[:160]}") from exc
 
 
 @app.post("/api/admin/questions", dependencies=[Depends(require_admin)])

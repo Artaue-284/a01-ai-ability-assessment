@@ -13,6 +13,8 @@ services:
         value: "1"
       - key: A01_PUBLIC_MODE
         value: "1"
+      - key: A01_LOAD_DEMO_DATA
+        value: "1"
       - key: A01_ALLOWED_HOSTS
         sync: false
       - key: PORT

@@ -5,6 +5,8 @@ import os
 import urllib.request
 import uuid
 
+from llm.config import load_llm_config
+
 
 DIMENSION_NAMES = {
     "basic": "AI基础认知",
@@ -29,10 +31,14 @@ class TBoxQuestionGenerator:
         self.token = os.getenv("TBOX_QUESTION_TOKEN", "").strip()
         self.app_id = os.getenv("TBOX_QUESTION_APP_ID", "202608AP9YhY21462248").strip()
         self.base_url = os.getenv("TBOX_BASE_URL", "https://api.tbox.cn").rstrip("/")
+        ant_line = load_llm_config()
+        self.ant_line_base_url = ant_line["ant_line_base_url"].rstrip("/")
+        self.ant_line_api_key = ant_line["ant_line_api_key"]
+        self.ant_line_model = ant_line["ant_line_model"] or "Ling-3.0-flash"
 
     @property
     def configured(self) -> bool:
-        return bool(self.token and self.app_id)
+        return bool((self.token and self.app_id) or (self.ant_line_base_url and self.ant_line_api_key))
 
     def generate(self, dimension: str, question_type: str, difficulty: int, count: int = 1) -> list[dict]:
         if not self.configured:
@@ -69,29 +75,55 @@ class TBoxQuestionGenerator:
                 }],
             },
         }
-        body = json.dumps({
-            "appId": self.app_id,
-            "query": json.dumps(instruction, ensure_ascii=False),
-            "userId": f"a01-question-{uuid.uuid4().hex}",
-            "stream": False,
-        }, ensure_ascii=False).encode("utf-8")
-        request = urllib.request.Request(
-            f"{self.base_url}/api/chat",
-            data=body,
-            headers={"Authorization": self.token, "Content-Type": "application/json"},
-            method="POST",
-        )
-        with urllib.request.urlopen(request, timeout=90) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-        if str(payload.get("errorCode")) != "0" or not payload.get("success", True):
-            raise RuntimeError(payload.get("errorMsg") or "百宝箱题库生成失败")
-        result = self._parse_result(payload)
+        if self.token and self.app_id:
+            body = json.dumps({"appId": self.app_id, "query": json.dumps(instruction, ensure_ascii=False),
+                "userId": f"a01-question-{uuid.uuid4().hex}", "stream": False}, ensure_ascii=False).encode("utf-8")
+            request = urllib.request.Request(f"{self.base_url}/api/chat", data=body,
+                headers={"Authorization": self.token, "Content-Type": "application/json"}, method="POST")
+            with urllib.request.urlopen(request, timeout=90) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+            if str(payload.get("errorCode")) != "0" or not payload.get("success", True):
+                raise RuntimeError(payload.get("errorMsg") or "百宝箱题库生成失败")
+            result = self._parse_result(payload)
+            source_model = f"baibaoxiang:{self.app_id}"
+        else:
+            body = json.dumps({"model": self.ant_line_model, "messages": [
+                {"role": "system", "content": "你是题库教研助手，只输出严格JSON对象，不输出Markdown。"},
+                {"role": "user", "content": json.dumps(instruction, ensure_ascii=False)}], "stream": False}, ensure_ascii=False).encode("utf-8")
+            request = urllib.request.Request(f"{self.ant_line_base_url}/chat/completions", data=body,
+                headers={"Authorization": f"Bearer {self.ant_line_api_key}", "Content-Type": "application/json"}, method="POST")
+            with urllib.request.urlopen(request, timeout=90) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+            text = payload["choices"][0]["message"]["content"]
+            result = self._parse_json_text(text)
+            source_model = f"ant-line:{self.ant_line_model}"
         items = result.get("items")
         if not isinstance(items, list) or not items:
             raise ValueError("题库智能体未返回有效的 items 数组")
         if len(items) < count:
             raise ValueError(f"题库智能体只返回 {len(items)} 题，少于请求的 {count} 题")
-        return [self._normalize(item, dimension, question_type, difficulty) for item in items[:count]]
+        normalized = [self._normalize(item, dimension, question_type, difficulty) for item in items[:count]]
+        for item in normalized:
+            item["source_model"] = source_model
+        return normalized
+
+    @staticmethod
+    def _parse_json_text(text: str) -> dict:
+        text = str(text).strip()
+        if text.startswith("```"):
+            text = text.removeprefix("```json").removeprefix("```").strip()
+            if text.endswith("```"):
+                text = text[:-3].strip()
+        try:
+            value = json.loads(text)
+        except json.JSONDecodeError:
+            start, end = text.find("{"), text.rfind("}")
+            if start < 0 or end <= start:
+                raise ValueError("题库智能体响应中没有有效JSON")
+            value = json.loads(text[start:end + 1])
+        if not isinstance(value, dict):
+            raise ValueError("题库智能体结果必须是JSON对象")
+        return value
 
     @staticmethod
     def _parse_result(payload: dict) -> dict:

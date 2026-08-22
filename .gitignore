@@ -11,6 +11,7 @@ data/*_key.txt
 data/llm_config.json
 data/remote_test_url.txt
 data/evidence/
+data/backups/
 .env
 .env.*
 !.env.example
@@ -30,6 +31,7 @@ docs/synthetic_validation_100/*.db
 
 # Regenerable Word/PDF render checks
 docs/render_*/
+docs/regression/*.png
 提交材料/_render_check/
 
 # Local tunnel binary and transient output

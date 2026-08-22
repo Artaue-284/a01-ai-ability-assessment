@@ -1,0 +1,20 @@
+{
+  "baseURL": "http://127.0.0.1:8000",
+  "desktop": {
+    "login": true,
+    "draft": true,
+    "edit": true,
+    "save": true,
+    "version_count": 1
+  },
+  "mobile": {
+    "login": true,
+    "teacher_workspace": true,
+    "question_manager": true,
+    "viewport": 390,
+    "scrollWidth": 390,
+    "qIdVisible": true
+  },
+  "generated_question_id": "AIBADCA422CD",
+  "errors": []
+}

@@ -170,6 +170,30 @@ def init_db(seed_questions: list[dict[str, Any]] | None = None) -> None:
             CREATE INDEX IF NOT EXISTS idx_reviews_answer ON human_reviews(answer_id);
             CREATE INDEX IF NOT EXISTS idx_dialogue_test_question ON dialogue_turns(test_id,question_id);
             CREATE INDEX IF NOT EXISTS idx_evidence_test_question ON evidence_files(test_id,question_id);
+            CREATE TABLE IF NOT EXISTS evidence_analyses (
+                evidence_id TEXT PRIMARY KEY REFERENCES evidence_files(id) ON DELETE CASCADE,
+                status TEXT NOT NULL,
+                mode TEXT NOT NULL,
+                model TEXT NOT NULL DEFAULT '',
+                summary TEXT NOT NULL DEFAULT '',
+                extracted_text TEXT NOT NULL DEFAULT '',
+                metadata_json TEXT NOT NULL DEFAULT '{}',
+                warning TEXT NOT NULL DEFAULT '',
+                analyzed_at TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS practical_runs (
+                id TEXT PRIMARY KEY,
+                test_id TEXT NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
+                question_id TEXT NOT NULL,
+                instruction TEXT NOT NULL,
+                status TEXT NOT NULL,
+                mode TEXT NOT NULL,
+                model TEXT NOT NULL,
+                actions_json TEXT NOT NULL DEFAULT '[]',
+                result TEXT NOT NULL DEFAULT '',
+                created_at TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS idx_practical_test_question ON practical_runs(test_id,question_id,created_at);
             CREATE TABLE IF NOT EXISTS ai_chat_turns (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 test_id TEXT NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
@@ -228,6 +252,11 @@ def init_db(seed_questions: list[dict[str, Any]] | None = None) -> None:
             CREATE INDEX IF NOT EXISTS idx_applications_user ON position_applications(user_id);
             """
         )
+        test_columns = {row["name"] for row in db.execute("PRAGMA table_info(tests)").fetchall()}
+        if "data_source" not in test_columns:
+            db.execute("ALTER TABLE tests ADD COLUMN data_source TEXT NOT NULL DEFAULT 'user'")
+        if "source_note" not in test_columns:
+            db.execute("ALTER TABLE tests ADD COLUMN source_note TEXT NOT NULL DEFAULT ''")
         from backend.enterprise import DEFAULT_JOB_TEMPLATES
 
         now = utc_now()
@@ -267,11 +296,12 @@ def upsert_user(user_id: str, name: str, class_name: str) -> None:
         )
 
 
-def create_test(test_id: str, user_id: str, target_questions: int, state: dict[str, Any]) -> None:
+def create_test(test_id: str, user_id: str, target_questions: int, state: dict[str, Any], data_source: str = "user", source_note: str = "") -> None:
     with connection() as db:
         db.execute(
-            "INSERT INTO tests VALUES (?, ?, 'active', ?, ?, ?, NULL)",
-            (test_id, user_id, target_questions, json.dumps(state, ensure_ascii=False), utc_now()),
+            """INSERT INTO tests(id,user_id,status,target_questions,state_json,started_at,completed_at,data_source,source_note)
+               VALUES (?,?,'active',?,?,?,NULL,?,?)""",
+            (test_id, user_id, target_questions, json.dumps(state, ensure_ascii=False), utc_now(), data_source, source_note),
         )
 
 
@@ -499,7 +529,85 @@ def save_evidence_file(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def evidence_files(test_id: str, question_id: str | None = None) -> list[dict[str, Any]]:
-    query = "SELECT id,test_id,question_id,filename,media_type,size_bytes,sha256,created_at FROM evidence_files WHERE test_id=?"
+    query = """SELECT e.id,e.test_id,e.question_id,e.filename,e.media_type,e.size_bytes,e.sha256,e.created_at,
+                      a.status analysis_status,a.mode analysis_mode,a.model analysis_model,
+                      a.summary analysis_summary,a.metadata_json analysis_metadata,a.warning analysis_warning
+               FROM evidence_files e LEFT JOIN evidence_analyses a ON a.evidence_id=e.id WHERE e.test_id=?"""
+    params: tuple[Any, ...] = (test_id,)
+    if question_id is not None:
+        query += " AND e.question_id=?"
+        params = (test_id, question_id)
+    query += " ORDER BY e.created_at"
+    with connection() as db:
+        rows = db.execute(query, params).fetchall()
+    items = []
+    for row in rows:
+        item = dict(row)
+        item["analysis_metadata"] = json.loads(item["analysis_metadata"] or "{}")
+        items.append(item)
+    return items
+
+
+def get_evidence_file(evidence_id: str) -> dict[str, Any] | None:
+    with connection() as db:
+        row = db.execute("SELECT * FROM evidence_files WHERE id=?", (evidence_id,)).fetchone()
+    return dict(row) if row else None
+
+
+def save_evidence_analysis(evidence_id: str, result: dict[str, Any]) -> dict[str, Any]:
+    now = utc_now()
+    with connection() as db:
+        if db.execute("SELECT 1 FROM evidence_files WHERE id=?", (evidence_id,)).fetchone() is None:
+            raise ValueError("证据文件不存在")
+        db.execute(
+            """INSERT INTO evidence_analyses
+               (evidence_id,status,mode,model,summary,extracted_text,metadata_json,warning,analyzed_at)
+               VALUES (?,?,?,?,?,?,?,?,?)
+               ON CONFLICT(evidence_id) DO UPDATE SET status=excluded.status,mode=excluded.mode,
+               model=excluded.model,summary=excluded.summary,extracted_text=excluded.extracted_text,
+               metadata_json=excluded.metadata_json,warning=excluded.warning,analyzed_at=excluded.analyzed_at""",
+            (evidence_id, result.get("status", ""), result.get("mode", ""), result.get("model", ""),
+             result.get("summary", ""), result.get("extracted_text", ""),
+             json.dumps(result.get("metadata", {}), ensure_ascii=False), result.get("warning", ""), now),
+        )
+    return {"evidence_id": evidence_id, **result, "analyzed_at": now}
+
+
+def evidence_analysis_context(test_id: str, question_id: str) -> str:
+    with connection() as db:
+        rows = db.execute(
+            """SELECT e.filename,a.status,a.mode,a.model,a.summary
+               FROM evidence_files e JOIN evidence_analyses a ON a.evidence_id=e.id
+               WHERE e.test_id=? AND e.question_id=? ORDER BY e.created_at""",
+            (test_id, question_id),
+        ).fetchall()
+    return "\n".join(
+        f"证据文件 {row['filename']}（{row['status']}/{row['mode']}/{row['model'] or 'local'}）：{row['summary']}"
+        for row in rows if row["summary"]
+    )
+
+
+def save_practical_run(item: dict[str, Any]) -> dict[str, Any]:
+    now = utc_now()
+    with connection() as db:
+        test = db.execute("SELECT status FROM tests WHERE id=?", (item["test_id"],)).fetchone()
+        if test is None:
+            raise ValueError("测评不存在")
+        if test["status"] == "completed":
+            raise ValueError("测评已完成，不能继续实操")
+        db.execute(
+            """INSERT INTO practical_runs
+               (id,test_id,question_id,instruction,status,mode,model,actions_json,result,created_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+            (item["id"], item["test_id"], item["question_id"], item["instruction"], item["status"],
+             item["mode"], item["model"], json.dumps(item.get("actions", []), ensure_ascii=False),
+             item.get("result", ""), now),
+        )
+    return {**item, "created_at": now}
+
+
+def practical_runs(test_id: str, question_id: str | None = None) -> list[dict[str, Any]]:
+    query = "SELECT * FROM practical_runs WHERE test_id=?"
     params: tuple[Any, ...] = (test_id,)
     if question_id is not None:
         query += " AND question_id=?"
@@ -507,7 +615,20 @@ def evidence_files(test_id: str, question_id: str | None = None) -> list[dict[st
     query += " ORDER BY created_at"
     with connection() as db:
         rows = db.execute(query, params).fetchall()
-    return [dict(row) for row in rows]
+    result = []
+    for row in rows:
+        item = dict(row)
+        item["actions"] = json.loads(item.pop("actions_json") or "[]")
+        result.append(item)
+    return result
+
+
+def practical_run_context(test_id: str, question_id: str) -> str:
+    runs = practical_runs(test_id, question_id)
+    return "\n".join(
+        f"受控实操（{item['model']}）：{item['result']}；工具记录：{json.dumps(item['actions'], ensure_ascii=False)}"
+        for item in runs[-3:]
+    )
 
 
 def save_ai_chat_turn(test_id: str, question_id: str, role: str, message: str, model: str = "") -> dict[str, Any]:
@@ -864,13 +985,16 @@ def question_versions(question_id: str) -> list[dict[str, Any]]:
 def question_statistics() -> list[dict[str, Any]]:
     with connection() as db:
         rows = db.execute(
-            """SELECT question_id,dimension,question_type,difficulty,COUNT(*) exposures,
+            """SELECT a.question_id,a.dimension,a.question_type,a.difficulty,COUNT(*) exposures,
                AVG(score/max_score) mean_score_ratio,AVG(elapsed_seconds) mean_seconds
-               FROM answers GROUP BY question_id,dimension,question_type,difficulty"""
+               FROM answers a JOIN tests t ON t.id=a.test_id
+               WHERE t.data_source!='synthetic_demo'
+               GROUP BY a.question_id,a.dimension,a.question_type,a.difficulty"""
         ).fetchall()
         raw = db.execute(
             """SELECT a.question_id,a.score/a.max_score response_ratio,t.state_json
-               FROM answers a JOIN tests t ON t.id=a.test_id WHERE t.status='completed'"""
+               FROM answers a JOIN tests t ON t.id=a.test_id
+               WHERE t.status='completed' AND t.data_source!='synthetic_demo'"""
         ).fetchall()
     by_question: dict[str, list[tuple[float, float]]] = {}
     for row in raw:
@@ -984,7 +1108,7 @@ def user_history(user_id: str) -> dict[str, Any]:
 def export_rows(kind: str) -> tuple[list[str], list[dict[str, Any]]]:
     with connection() as db:
         if kind == "answers":
-            rows = db.execute("""SELECT a.id,a.test_id,u.name user_name,u.class_name,a.question_id,a.dimension,a.question_type,a.difficulty,a.answer_text,a.score,a.max_score,a.elapsed_seconds,a.created_at FROM answers a JOIN tests t ON t.id=a.test_id JOIN users u ON u.id=t.user_id ORDER BY a.id""").fetchall()
+            rows = db.execute("""SELECT a.id,a.test_id,t.data_source,t.source_note,u.name user_name,u.class_name,a.question_id,a.dimension,a.question_type,a.difficulty,a.answer_text,a.score,a.max_score,a.elapsed_seconds,a.created_at FROM answers a JOIN tests t ON t.id=a.test_id JOIN users u ON u.id=t.user_id ORDER BY a.id""").fetchall()
         elif kind == "reviews":
             rows = db.execute("""SELECT r.id,r.answer_id,r.reviewer,r.score,r.comment,r.created_at,a.question_id,a.score model_score,a.max_score FROM human_reviews r JOIN answers a ON a.id=r.answer_id ORDER BY r.id""").fetchall()
         elif kind == "feedback":
