@@ -1028,7 +1028,11 @@ def question_statistics() -> list[dict[str, Any]]:
 def pending_review_answer_count() -> int:
     with connection() as db:
         row = db.execute(
-            "SELECT COUNT(*) total FROM answers WHERE question_type IN ('open_text','practical','code','image','dialogue')"
+            """SELECT COUNT(*) total
+               FROM answers a JOIN tests t ON t.id=a.test_id
+               WHERE a.question_type IN ('open_text','practical','code','image','dialogue')
+                 AND (COALESCE(t.data_source,'') != 'synthetic_demo'
+                      OR EXISTS (SELECT 1 FROM human_reviews r WHERE r.answer_id=a.id))"""
         ).fetchone()
     return int(row["total"])
 
@@ -1042,6 +1046,8 @@ def pending_review_answers(offset: int = 0, limit: int | None = None) -> list[di
                (SELECT COUNT(*) FROM human_reviews r WHERE r.answer_id=a.id) review_count
                FROM answers a JOIN tests t ON t.id=a.test_id JOIN users u ON u.id=t.user_id
                WHERE a.question_type IN ('open_text','practical','code','image','dialogue')
+                 AND (COALESCE(t.data_source,'') != 'synthetic_demo'
+                      OR EXISTS (SELECT 1 FROM human_reviews r WHERE r.answer_id=a.id))
                ORDER BY a.created_at DESC,a.id DESC""" + paging,
             params,
         ).fetchall()
