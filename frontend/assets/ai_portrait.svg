@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 480 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8e2f2"/>
+      <stop offset="1" stop-color="#cfc3e0"/>
+    </linearGradient>
+    <radialGradient id="face" cx="0.5" cy="0.42" r="0.42">
+      <stop offset="0" stop-color="#ffe8d4"/>
+      <stop offset="1" stop-color="#f2c9a8"/>
+    </radialGradient>
+  </defs>
+  <rect width="480" height="600" fill="url(#bg)"/>
+  <!-- 背景纹理：涂抹感（AI 生成特征） -->
+  <g stroke="#b9a8cf" stroke-width="2" stroke-opacity="0.35" fill="none">
+    <path d="M30 90 Q90 70 150 95 T280 85 T430 95"/>
+    <path d="M20 150 Q120 130 220 155 T470 145"/>
+    <path d="M10 520 Q140 500 260 525 T470 515"/>
+  </g>
+  <g stroke="#c9bde0" stroke-width="1.4" stroke-opacity="0.5" fill="none">
+    <path d="M40 120 Q200 100 330 130"/>
+    <path d="M60 180 Q240 165 400 190"/>
+    <path d="M50 470 Q220 450 380 475"/>
+  </g>
+  <!-- 身体 -->
+  <path d="M170 520 Q165 460 175 430 L305 430 Q315 460 310 520 Z" fill="#7a6fa8"/>
+  <!-- 脖子 -->
+  <rect x="220" y="392" width="40" height="44" rx="10" fill="#f2c9a8"/>
+  <!-- 头部 -->
+  <ellipse cx="240" cy="330" rx="86" ry="104" fill="url(#face)"/>
+  <!-- 头发（过度平滑、缺乏发丝层次） -->
+  <path d="M154 318 Q150 180 240 168 Q330 180 326 318 Q300 260 240 258 Q180 260 154 318 Z" fill="#4a3b2f"/>
+  <path d="M154 318 Q170 290 240 292 Q310 290 326 318 L326 350 Q300 330 240 332 Q180 330 154 350 Z" fill="#4a3b2f"/>
+  <!-- 左耳 + 耳环（破绽 1：左右耳环不对称） -->
+  <ellipse cx="150" cy="330" rx="14" ry="20" fill="#f2c9a8"/>
+  <circle cx="150" cy="356" r="7" fill="#e6b93f"/>
+  <!-- 右耳 + 耳环（与左耳位置/大小不一致） -->
+  <ellipse cx="330" cy="326" rx="12" ry="17" fill="#f2c9a8"/>
+  <circle cx="330" cy="348" r="5" fill="#e6b93f"/>
+  <!-- 眼睛：反光点方向不一致（破绽 2） -->
+  <g>
+    <ellipse cx="202" cy="322" rx="17" ry="11" fill="#ffffff"/>
+    <ellipse cx="280" cy="322" rx="17" ry="11" fill="#ffffff"/>
+    <circle cx="204" cy="322" r="8" fill="#5a4632"/>
+    <circle cx="282" cy="322" r="8" fill="#5a4632"/>
+    <circle cx="206" cy="319" r="3" fill="#ffffff"/>
+    <circle cx="280" cy="319" r="3" fill="#ffffff"/>
+    <circle cx="200" cy="320" r="2.4" fill="#ffffff"/>
+    <circle cx="286" cy="320" r="2.4" fill="#ffffff"/>
+  </g>
+  <g stroke="#8a6f5a" stroke-width="3" fill="none">
+    <path d="M196 340 Q202 344 208 340"/>
+    <path d="M272 340 Q278 344 284 340"/>
+  </g>
+  <!-- 鼻子 -->
+  <path d="M238 336 Q242 352 236 360 Q244 356 248 358" stroke="#d9a87e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- 嘴：牙齿边缘过度平滑 -->
+  <path d="M212 372 Q240 388 268 372 Q240 398 212 372 Z" fill="#c96a5a"/>
+  <path d="M218 376 Q240 382 262 376" stroke="#f7e8e0" stroke-width="2" fill="none"/>
+  <!-- 左臂 -->
+  <g stroke="#f2c9a8" stroke-width="26" stroke-linecap="round" fill="none">
+    <path d="M186 440 Q150 470 128 500"/>
+  </g>
+  <!-- 左手（破绽 3：六根手指） -->
+  <g stroke="#f2c9a8" stroke-width="9" stroke-linecap="round" fill="none">
+    <path d="M128 500 L104 492"/>
+    <path d="M128 500 L100 502"/>
+    <path d="M128 500 L104 514"/>
+    <path d="M128 500 L114 528"/>
+    <path d="M128 500 L128 534"/>
+    <path d="M128 500 L140 530"/>
+  </g>
+  <text x="240" y="40" fill="#6b5d92" font-size="14" font-family="sans-serif" text-anchor="middle">AI 生成风格人物示例：请寻找手部、对称性与背景纹理破绽</text>
+</svg>

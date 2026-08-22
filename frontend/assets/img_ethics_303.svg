@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="480" viewBox="0 0 520 480">
+<rect width="520" height="480" fill="#eef1f5"/>
+<rect x="40" y="30" width="440" height="420" rx="12" fill="#fff" stroke="#c9d2db" stroke-width="3"/>
+<text x="150" y="75" font-size="16" fill="#3a4a5a" font-family="sans-serif">群聊：项目推进</text>
+<text x="60" y="120" font-size="13" fill="#8a97a5" font-family="sans-serif">2026年3月15日</text>
+<rect x="60" y="135" width="300" height="54" rx="10" fill="#eef1f5"/><text x="80" y="160" font-size="14" fill="#3a4a5a" font-family="sans-serif">张三：明天提交初稿</text><text x="80" y="182" font-size="13" fill="#8a97a5" font-family="sans-serif">10:02</text>
+<rect x="160" y="205" width="300" height="54" rx="10" fill="#dce9f7"/><text x="180" y="230" font-size="14" fill="#2c4a6a" font-family="sans-serif">李四：收到，今天完成</text><text x="180" y="252" font-size="13" fill="#8a97a5" font-family="sans-serif">10:05</text>
+<text x="60" y="290" font-size="13" fill="#8a97a5" font-family="sans-serif">2025年12月1日</text>
+<rect x="60" y="305" width="300" height="54" rx="10" fill="#eef1f5"/><text x="80" y="330" font-size="14" fill="#3a4a5a" font-family="sans-serif">王五：初稿已提交</text><text x="80" y="352" font-size="13" fill="#8a97a5" font-family="sans-serif">09:30</text>
+<text x="150" y="420" font-size="13" fill="#8a97a5" font-family="sans-serif">以上为聊天记录截图示例</text>
+</svg>

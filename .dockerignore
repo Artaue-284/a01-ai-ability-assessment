@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.git/
+.venv/
+venv/
+.test_runtime/
+.tmp_test/
+data/*.db
+data/*_key.txt
+data/llm_config.json
+data/evidence/
+*.log
+*.pid
+提交材料/
+docs/render_*/

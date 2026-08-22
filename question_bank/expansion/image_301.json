@@ -1,0 +1,146 @@
+[
+  {
+    "id": "IM301", "dimension": "basic", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「城市夜景」图片（AI 生成示例），找出至少一处不符合物理规律的细节，并说明你的判断依据。",
+    "image_url": "/static/assets/img_basic_301.svg",
+    "rubric": ["指出异常细节", "判断依据合理", "说明核验方法"], "keywords": ["路灯", "悬浮", "光线", "物理"],
+    "max_score": 20,
+    "explanation": "图中的路灯灯头悬浮在半空且没有灯柱支撑，违背重力与结构常识；应从支撑结构、光影方向等角度核验。",
+    "tags": ["图像鉴别", "物理规律"]
+  },
+  {
+    "id": "IM302", "dimension": "basic", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「人物肖像」图片，找出不符合人体结构常识的细节并说明判断依据。",
+    "image_url": "/static/assets/img_basic_302.svg",
+    "rubric": ["指出异常细节", "判断依据合理", "说明核验方法"], "keywords": ["手指", "六指", "结构", "人体"],
+    "max_score": 20,
+    "explanation": "图中人物右手有六根手指，超出正常人体结构；AI 生成人像常见此类细节错误。",
+    "tags": ["图像鉴别", "人体结构"]
+  },
+  {
+    "id": "IM303", "dimension": "prompt", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「活动海报」，找出文字或信息中的异常（至少两处），并说明你会如何用提示词修正这类错误。",
+    "image_url": "/static/assets/img_prompt_301.svg",
+    "rubric": ["指出文字异常", "指出信息矛盾", "给出修正提示思路"], "keywords": ["文字", "重影", "日期", "海报"],
+    "max_score": 20,
+    "explanation": "海报存在文字重影错乱、活动日期前后不一致等异常；修正提示应明确文字内容、禁止重影与信息唯一性。",
+    "tags": ["图像鉴别", "文字"]
+  },
+  {
+    "id": "IM304", "dimension": "prompt", "difficulty": 3, "type": "image",
+    "question": "图像鉴别任务：观察这张「钟表特写」图片，找出时间读数或指针矛盾之处，并说明你的推理过程。",
+    "image_url": "/static/assets/img_prompt_302.svg",
+    "rubric": ["指出指针矛盾", "推理过程清晰", "给出改进提示"], "keywords": ["指针", "时间", "矛盾", "推理"],
+    "max_score": 20,
+    "explanation": "图中时针指向 12、分针指向约 4:30，读数与指针关系矛盾；应从指针长度与角度关系推理。",
+    "tags": ["图像鉴别", "逻辑"]
+  },
+  {
+    "id": "IM305", "dimension": "prompt", "difficulty": 3, "type": "image",
+    "question": "图像鉴别任务：观察这张「书桌一角」图片，找出违背物理常识的细节，并说明如果你要用 AI 重绘，会在提示词中加入哪些约束。",
+    "image_url": "/static/assets/img_prompt_303.svg",
+    "rubric": ["指出异常细节", "说明物理依据", "给出重绘约束"], "keywords": ["悬浮", "书本", "桌面", "约束"],
+    "max_score": 20,
+    "explanation": "图中右侧书本悬浮于桌面上方无支撑；重绘提示应加入「书本放置在桌面上」等物理约束。",
+    "tags": ["图像鉴别", "物理约束"]
+  },
+  {
+    "id": "IM306", "dimension": "tools", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「季度销量趋势图」，找出数据可视化中的错误（至少两处），并说明正确做法。",
+    "image_url": "/static/assets/img_tools_301.svg",
+    "rubric": ["指出图表错误", "说明正确做法", "给出核验方法"], "keywords": ["坐标轴", "数值", "图表", "刻度"],
+    "max_score": 20,
+    "explanation": "图中 Y 轴刻度顺序错乱（100/300/200/400），柱形高度与数值不符；正确图表应刻度单调递增且柱高与数值一致。",
+    "tags": ["图像鉴别", "图表"]
+  },
+  {
+    "id": "IM307", "dimension": "tools", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「办公桌面」图片，找出空间透视或物品摆放的异常，并说明判断依据。",
+    "image_url": "/static/assets/img_tools_302.svg",
+    "rubric": ["指出透视异常", "判断依据合理", "说明核验方法"], "keywords": ["透视", "桌面", "视角", "异常"],
+    "max_score": 20,
+    "explanation": "图中物品透视关系不一致（如杯子的投影方向与其他物品冲突）；应从透视灭点与投影方向核验。",
+    "tags": ["图像鉴别", "透视"]
+  },
+  {
+    "id": "IM308", "dimension": "tools", "difficulty": 3, "type": "image",
+    "question": "图像鉴别任务：观察这张「二维码」图片，判断它能否被正常扫描，指出结构缺陷并说明依据。",
+    "image_url": "/static/assets/img_tools_303.svg",
+    "rubric": ["判断能否扫描", "指出结构缺陷", "说明判断依据"], "keywords": ["二维码", "定位角", "结构", "扫描"],
+    "max_score": 20,
+    "explanation": "二维码缺少右下定位角，无法被识别；二维码的三个定位角缺一不可。",
+    "tags": ["图像鉴别", "结构"]
+  },
+  {
+    "id": "IM309", "dimension": "evaluation", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「社团合影」，比较人物与水中倒影，找出不一致之处并说明判断依据。",
+    "image_url": "/static/assets/img_evaluation_301.svg",
+    "rubric": ["指出数量差异", "判断依据合理", "说明核验方法"], "keywords": ["倒影", "人数", "一致", "比较"],
+    "max_score": 20,
+    "explanation": "岸上五人而倒影只有四人，倒影数量与人物不一致；应逐一对齐人物与倒影核验。",
+    "tags": ["图像鉴别", "一致性"]
+  },
+  {
+    "id": "IM310", "dimension": "evaluation", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「年度销量图」，找出图表结论与数据之间的矛盾，并说明正确的结论是什么。",
+    "image_url": "/static/assets/img_evaluation_302.svg",
+    "rubric": ["指出矛盾", "给出正确结论", "说明核验方法"], "keywords": ["销量", "下降", "矛盾", "结论"],
+    "max_score": 20,
+    "explanation": "图中 Q1 到 Q4 柱形逐季变矮（销量下降），但标注箭头却称「持续上升」；正确结论是销量逐季下降。",
+    "tags": ["图像鉴别", "数据矛盾"]
+  },
+  {
+    "id": "IM311", "dimension": "collaboration", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「会议室讨论」图片，找出光影与环境的异常，并说明判断依据。",
+    "image_url": "/static/assets/img_collaboration_301.svg",
+    "rubric": ["指出光影异常", "判断依据合理", "说明核验方法"], "keywords": ["影子", "光源", "方向", "异常"],
+    "max_score": 20,
+    "explanation": "图中两人的影子方向相反，同一光源下不可能出现；应从光源位置与影子方向一致性核验。",
+    "tags": ["图像鉴别", "光影"]
+  },
+  {
+    "id": "IM312", "dimension": "collaboration", "difficulty": 3, "type": "image",
+    "question": "图像鉴别任务：观察这张「AI 协作审批流程图」，找出流程逻辑中的错误，并说明正确的流程应如何设计。",
+    "image_url": "/static/assets/img_collaboration_302.svg",
+    "rubric": ["指出流程错误", "说明正确流程", "给出修改建议"], "keywords": ["流程图", "箭头", "循环", "逻辑"],
+    "max_score": 20,
+    "explanation": "图中「返回修改」箭头指向了流程起始节点形成死循环，且人工审核结果未分流；正确流程应区分通过/驳回两条路径。",
+    "tags": ["图像鉴别", "流程逻辑"]
+  },
+  {
+    "id": "IM313", "dimension": "collaboration", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「双人协作工位」图片，找出物品布置中的异常，并说明判断依据。",
+    "image_url": "/static/assets/img_collaboration_303.svg",
+    "rubric": ["指出异常物品", "判断依据合理", "说明核验方法"], "keywords": ["键盘", "工位", "双人", "异常"],
+    "max_score": 20,
+    "explanation": "单人工位上出现两个并排键盘，不符合常规工位布置；应从物品数量与使用逻辑核验。",
+    "tags": ["图像鉴别", "场景合理性"]
+  },
+  {
+    "id": "IM314", "dimension": "ethics", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「学员证示例」，从隐私保护角度评估它的信息展示方式，指出问题并给出改进建议。",
+    "image_url": "/static/assets/img_ethics_301.svg",
+    "rubric": ["指出隐私问题", "给出改进建议", "说明合规依据"], "keywords": ["隐私", "脱敏", "证件", "信息"],
+    "max_score": 20,
+    "explanation": "证件示例展示照片与身份信息区域，公开使用时应脱敏或遮挡可识别信息，遵循最小必要原则。",
+    "tags": ["图像鉴别", "隐私"]
+  },
+  {
+    "id": "IM315", "dimension": "ethics", "difficulty": 2, "type": "image",
+    "question": "图像鉴别任务：观察这张「走廊监控画面」，找出光影或物理细节的异常，并说明判断依据。",
+    "image_url": "/static/assets/img_ethics_302.svg",
+    "rubric": ["指出光影异常", "判断依据合理", "说明核验方法"], "keywords": ["光源", "影子", "方向", "监控"],
+    "max_score": 20,
+    "explanation": "画面右侧光源照射下人物影子却投向光源方向，与光照规律矛盾；应从光源与影子方向一致性核验。",
+    "tags": ["图像鉴别", "光影"]
+  },
+  {
+    "id": "IM316", "dimension": "ethics", "difficulty": 3, "type": "image",
+    "question": "图像鉴别任务：观察这张「群聊截图示例」，找出信息中的矛盾之处，并说明这类内容用于证据时该如何核验真伪。",
+    "image_url": "/static/assets/img_ethics_303.svg",
+    "rubric": ["指出信息矛盾", "给出核验方法", "说明证据使用规范"], "keywords": ["日期", "截图", "矛盾", "核验"],
+    "max_score": 20,
+    "explanation": "截图中对话日期从 2026 年 3 月跳回 2025 年 12 月，时间顺序矛盾；截图作为证据应核对元数据与多方印证。",
+    "tags": ["图像鉴别", "证据核验"]
+  }
+]

@@ -8,6 +8,7 @@ venv/
 # Runtime state and credentials (never commit)
 data/*.db
 data/*_key.txt
+data/llm_config.json
 data/remote_test_url.txt
 data/evidence/
 .env
@@ -16,6 +17,16 @@ data/evidence/
 
 # Generated validation database; CSV/JSON evidence remains versioned
 docs/synthetic_validation_100/*.db
+
+# Unit-test isolated runtime database and scratch probes
+.test_runtime/
+.tmp_test/
+.tmp_pip/
+.sim_probe/
+.probe_db.py
+.list_db.py
+.check_frontend_ids.py
+.check_frontend.js
 
 # Regenerable Word/PDF render checks
 docs/render_*/
@@ -31,4 +42,3 @@ tools/cloudflared/cloudflared.exe
 .idea/
 .DS_Store
 Thumbs.db
-

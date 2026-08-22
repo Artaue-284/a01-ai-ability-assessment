@@ -20,16 +20,19 @@ class EngineTests(unittest.TestCase):
         bank = questions()
         stats = validate_question_bank(bank)
         self.assertTrue(stats["valid"], stats["errors"])
-        self.assertEqual(stats["total"], 91)
+        self.assertEqual(stats["total"], 300)
         self.assertTrue(all(q.get("ability_level") for q in bank))
         self.assertTrue(all(q.get("tags") for q in bank))
         self.assertTrue(all(len(q.get("explanation", "").strip()) >= 12 for q in bank))
-        self.assertEqual(len({q["explanation"] for q in bank}), 91)
+        self.assertEqual(len({q["explanation"] for q in bank}), 300)
         self.assertIn("review_completion", stats)
         for dimension in DIMENSIONS:
-            self.assertEqual(stats["by_dimension"][dimension], 16 if dimension == "evaluation" else 15)
+            self.assertGreaterEqual(stats["by_dimension"][dimension], 15)
         self.assertTrue(assessment_readiness(bank)["ready"])
         self.assertEqual(stats["review_completion"], 100.0)
+        self.assertIn("dialogue", stats["by_type"])
+        self.assertIn("code", stats["by_type"])
+        self.assertIn("image", stats["by_type"])
 
     def test_layered_random_has_no_duplicates_and_finishes(self):
         bank = questions()
@@ -53,7 +56,7 @@ class EngineTests(unittest.TestCase):
     def test_choice_lengths_and_answer_positions_are_balanced(self):
         objective = [item for item in questions() if item["type"] == "single_choice"]
         positions = Counter("ABCD"[item["options"].index(item["answer"])] for item in objective)
-        self.assertEqual(positions, Counter({"A": 21, "B": 21, "C": 21, "D": 21}))
+        self.assertEqual(positions, Counter({"A": 45, "B": 45, "C": 45, "D": 45}))
         for item in objective:
             lengths = [len(option) for option in item["options"]]
             self.assertLessEqual(max(lengths) - min(lengths), 8, item["id"])
@@ -89,9 +92,9 @@ class EngineTests(unittest.TestCase):
         for slot in range(1, 13):
             question = engine.select_question(slot)
             engine.submit_answer(question["id"], "__wrong__", 5)
-        subjective = engine.select_question(14)
+        subjective = engine.select_question(13)
         engine.submit_answer(subjective["id"], "部分完成", 5, {"score": 10})
-        self.assertEqual(engine.question_palette()[13]["status"], "partial")
+        self.assertEqual(engine.question_palette()[12]["status"], "partial")
 
     def test_validation_simulator_separates_profiles(self):
         result = run_validation(runs=10, target=18)

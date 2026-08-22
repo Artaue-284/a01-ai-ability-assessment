@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: a01-ai-ability-assessment-demo
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/status
+    envVars:
+      - key: A01_ADMIN_KEY
+        sync: false
+      - key: A01_ENTERPRISE_KEY
+        sync: false
+      - key: A01_REQUIRE_ENV_SECRETS
+        value: "1"
+      - key: A01_PUBLIC_MODE
+        value: "1"
+      - key: A01_ALLOWED_HOSTS
+        sync: false
+      - key: PORT
+        value: "10000"

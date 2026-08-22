@@ -9,7 +9,6 @@ from collections import Counter
 from pathlib import Path
 
 from algorithm.adaptive_test import AdaptiveTestEngine, DIMENSIONS
-from algorithm.level_scale import score_to_level_code
 from question_bank.loader import assessment_readiness, load_all_questions
 
 
@@ -33,7 +32,11 @@ def expected_success(ability: float, difficulty: int) -> float:
 
 
 def score_to_level(score: float) -> str:
-    return score_to_level_code(score)
+    if score >= 90: return "L5"
+    if score >= 80: return "L4"
+    if score >= 65: return "L3"
+    if score >= 50: return "L2"
+    return "L1"
 
 
 def simulate(profile: str, run_number: int, bank: list[dict], target: int) -> dict:

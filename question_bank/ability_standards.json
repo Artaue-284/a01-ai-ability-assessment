@@ -1,13 +1,36 @@
 {
   "version": "1.1",
-  "calibration_version": "synthetic-calibration-20260817-v1",
-  "calibration_scope": "100份仿真人工答题样本，不代表真人常模",
   "score_bands": [
-    {"level": "L1", "name": "入门", "min_score": 0, "max_score": 34.4},
-    {"level": "L2", "name": "基础", "min_score": 34.5, "max_score": 49.6},
-    {"level": "L3", "name": "熟练", "min_score": 49.7, "max_score": 65.8},
-    {"level": "L4", "name": "高级", "min_score": 65.9, "max_score": 80.7},
-    {"level": "L5", "name": "专家", "min_score": 80.8, "max_score": 100}
+    {
+      "level": "L1",
+      "name": "入门",
+      "min_score": 0.0,
+      "max_score": 34.5
+    },
+    {
+      "level": "L2",
+      "name": "基础",
+      "min_score": 34.5,
+      "max_score": 49.7
+    },
+    {
+      "level": "L3",
+      "name": "熟练",
+      "min_score": 49.7,
+      "max_score": 65.9
+    },
+    {
+      "level": "L4",
+      "name": "高级",
+      "min_score": 65.9,
+      "max_score": 80.8
+    },
+    {
+      "level": "L5",
+      "name": "专家",
+      "min_score": 80.8,
+      "max_score": 100.0
+    }
   ],
   "dimensions": {
     "basic": {
@@ -70,5 +93,6 @@
         "L5": "能建立覆盖数据、模型、使用过程和审计的AI治理体系。"
       }
     }
-  }
+  },
+  "note": "分数段与 config/level_thresholds.json（100份仿真样本校准）保持一致；正式对外宣称效度前需以真实样本复校。"
 }

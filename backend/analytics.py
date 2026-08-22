@@ -46,12 +46,7 @@ def review_metrics(records: list[dict[str, Any]]) -> dict[str, Any]:
     for items in by_answer.values():
         model.append(items[0]["model_score"] / items[0]["max_score"])
         human.append(sum(item["score"] for item in items) / len(items) / items[0]["max_score"])
-    disagreements = sum(abs(a - b) >= 0.2 - 1e-9 for a, b in zip(first, second))
-    note = (
-        "样本少于30时仅用于过程监测，不应作为正式效度结论。"
-        if len(paired) < 30
-        else "双评样本已达到30份，可用于一致性过程统计；仍需结合真实教师样本解释。"
-    )
+    disagreements = sum(abs(a - b) >= 0.2 for a, b in zip(first, second))
     return {
         "reviewed_answers": len(by_answer),
         "double_reviewed_answers": len(paired),
@@ -59,5 +54,5 @@ def review_metrics(records: list[dict[str, Any]]) -> dict[str, Any]:
         "inter_rater_pearson": pearson(first, second),
         "quadratic_weighted_kappa": weighted_kappa(first, second),
         "major_disagreements": disagreements,
-        "note": note,
+        "note": "样本少于30时仅用于过程监测，不应作为正式效度结论。",
     }

@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import urllib.error
 import urllib.request
 from typing import Any
@@ -93,6 +94,15 @@ class TBoxDialogueCoach:
             guidance = value.get("guidance") or value.get("feedback") or value.get("next_question")
             if guidance:
                 cleaned = str(guidance).strip()
+        # 模型偶发输出工具调用 / Agent 结构化标记——剥离并保留可读文本
+        if re.search(r"<tool_call|<arg_key|<arg_value|</arg_", cleaned):
+            values = re.findall(r"<arg_value>([\s\S]*?)</arg_value>", cleaned)
+            readable = [v.strip() for v in values if v.strip()]
+            if readable:
+                cleaned = " ".join(readable)[:800]
+            else:
+                cleaned = re.sub(r"</?(tool_call|arg_key|arg_value|function_call|result|state|transition)>", "", cleaned)
+                cleaned = re.sub(r"<[^>]+>", "", cleaned).strip()
         if not cleaned:
             raise TBoxDialogueUnavailable("invalid-response", "百宝箱未返回可用的过程引导")
         return cleaned[:800]
@@ -119,6 +129,7 @@ class TBoxDialogueCoach:
             "学员本轮作答": message,
             "要求": (
                 "这是连续过程辅导，不是最终评分。结合历史对话，只在 feedback 字段给出下一步引导；"
+                "每次只给出当前这一轮的引导，不要一次性输出多轮引导计划，"
                 "不得泄露参考答案，不得代做，指出一项缺口并提出一个追问，中文不超过120字。"
             ),
         }

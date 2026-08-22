@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="360" viewBox="0 0 560 360">
+<rect width="560" height="360" fill="#2a3444"/>
+<rect x="0" y="280" width="560" height="80" fill="#1c2330"/>
+<circle cx="80" cy="80" r="40" fill="#f6d876"/>
+<rect x="0" y="0" width="560" height="14" fill="#0e1420"/>
+<text x="20" y="30" font-size="12" fill="#8fa0b8" font-family="sans-serif">CAM-01</text>
+<g>
+<circle cx="380" cy="230" r="22" fill="#7a8aa0"/><rect x="362" y="252" width="36" height="50" rx="6" fill="#3a4a5a"/>
+</g>
+<ellipse cx="500" cy="300" rx="40" ry="10" fill="#0e1420" opacity="0.6"/>
+<rect x="470" y="120" width="6" height="170" fill="#5a6a7a"/>
+<circle cx="473" cy="112" r="8" fill="#f6d876"/>
+<text x="200" y="340" font-size="13" fill="#8fa0b8" font-family="sans-serif">走廊监控画面</text>
+</svg>
