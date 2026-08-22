@@ -36,7 +36,7 @@ from backend.database import (
     get_evidence_file,
     list_job_templates, position_applications, reset_account_password, resolve_session,
     save_ai_chat_turn, save_dialogue_turn, save_evidence_file, save_job_template,
-    pending_review_answers, question_statistics, question_versions, resolve_review,
+    pending_review_answer_count, pending_review_answers, question_statistics, question_versions, resolve_review,
     review_records, save_answer, save_human_review, save_question_item, save_state,
     set_account_enabled, set_job_match_consent, set_job_template_enabled,
     save_evidence_analysis, save_practical_run, practical_runs, practical_run_context,
@@ -363,8 +363,13 @@ def get_engine(test_id: str) -> tuple[AdaptiveTestEngine, object]:
 def startup() -> None:
     init_db(SEED_QUESTIONS)
     if os.getenv("A01_LOAD_DEMO_DATA", "0") == "1":
-        from tools.load_demo_responses import seed_demo_accounts, seed_demo_positions_and_applications, seed_demo_responses
+        from tools.load_demo_responses import (
+            seed_demo_accounts, seed_demo_positions_and_applications, seed_demo_responses,
+            seed_double_review_cases, seed_growth_history,
+        )
         seed_demo_responses(count=100, target_questions=25)
+        seed_growth_history(student_count=100, attempts_per_student=50, target_questions=25)
+        seed_double_review_cases(minimum_cases=24)
         teacher_password = os.getenv("A01_DEMO_TEACHER_PASSWORD", "")
         enterprise_password = os.getenv("A01_DEMO_ENTERPRISE_PASSWORD", "")
         if teacher_password and enterprise_password:
@@ -1081,16 +1086,22 @@ def admin_import_questions(request: QuestionImportRequest):
 
 
 @app.get("/api/admin/reviews/pending", dependencies=[Depends(require_admin)])
-def admin_pending_reviews():
+def admin_pending_reviews(page: int = 1, page_size: int = 5):
+    page = max(1, page)
+    page_size = max(1, min(20, page_size))
+    total = pending_review_answer_count()
+    total_pages = max(1, (total + page_size - 1) // page_size)
+    page = min(page, total_pages)
     index = question_index()
-    items = pending_review_answers()
+    items = pending_review_answers(offset=(page - 1) * page_size, limit=page_size)
     for item in items:
         question = index.get(item["question_id"], {})
         item["question"] = question.get("question", "历史题目")
         item["rubric"] = question.get("rubric", [])
         item["dialogue_turns"] = dialogue_turns(item["test_id"], item["question_id"])
         item["evidence_files"] = evidence_files(item["test_id"], item["question_id"])
-    return {"items": items, "metrics": review_metrics(review_records())}
+    return {"items": items, "metrics": review_metrics(review_records()),
+        "pagination": {"page": page, "page_size": page_size, "total": total, "total_pages": total_pages}}
 
 
 @app.post("/api/admin/reviews", dependencies=[Depends(require_admin)])

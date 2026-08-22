@@ -5,6 +5,7 @@ import json
 import random
 import sys
 import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -147,10 +148,152 @@ def seed_demo_responses(count: int = 100, target_questions: int = 25, seed: int 
     return {"requested": count, "inserted": inserted, "total_demo_tests": totals["tests"], "total_demo_answers": totals["answers"], "target_questions": target_questions, "data_source": "synthetic_demo"}
 
 
+def seed_growth_history(student_count: int = 100, attempts_per_student: int = 50,
+                        target_questions: int = 25, seed: int = 20260823) -> dict:
+    """为每名演示学员补齐 50 次独立测评，并保证题目组合不完全相同。"""
+    questions = load_all_questions()
+    db.init_db(questions)
+    scorer = LLMScorer()
+    question_by_id = {item["id"]: item for item in questions}
+    levels = list(LEVEL_ABILITIES)
+    inserted_tests = 0
+    inserted_answers = 0
+    base_time = datetime(2026, 1, 1, 8, 0, tzinfo=timezone.utc)
+    with db.connection() as connection:
+        for number in range(1, student_count + 1):
+            user_id = f"DEMO-{number:03d}"
+            existing_rows = connection.execute(
+                """SELECT t.id,t.source_note,GROUP_CONCAT(a.question_id,'|') signature
+                   FROM tests t LEFT JOIN answers a ON a.test_id=t.id
+                   WHERE t.user_id=? AND t.data_source='synthetic_demo' AND t.status='completed'
+                   GROUP BY t.id ORDER BY t.completed_at,t.id""", (user_id,),
+            ).fetchall()
+            if not existing_rows:
+                raise RuntimeError(f"缺少演示学员基础测评：{user_id}")
+            first_id = existing_rows[0]["id"]
+            first_time = base_time + timedelta(minutes=number)
+            connection.execute(
+                "UPDATE tests SET started_at=?,completed_at=?,source_note=? WHERE id=?",
+                (first_time.isoformat(), (first_time + timedelta(minutes=35)).isoformat(),
+                 "growth_attempt=1;synthetic_demo=true", first_id),
+            )
+            signatures = {row["signature"] for row in existing_rows if row["signature"]}
+            completed = len(existing_rows)
+            for attempt in range(completed + 1, attempts_per_student + 1):
+                test_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"a01-demo-growth-v2-{number:03d}-{attempt:02d}"))
+                if connection.execute("SELECT 1 FROM tests WHERE id=?", (test_id,)).fetchone():
+                    continue
+                level = levels[(number - 1) % len(levels)]
+                nonce = 0
+                while True:
+                    rng = random.Random(f"{seed}-{number}-{attempt}-{nonce}")
+                    person = build_person(level, number, rng)
+                    progress = (attempt - 1) / max(1, attempts_per_student - 1)
+                    for dimension, value in person["dimension_abilities"].items():
+                        person["dimension_abilities"][dimension] = min(0.97, value + (0.97 - value) * 0.48 * progress)
+                    engine = AdaptiveTestEngine(questions, state=AdaptiveTestEngine.initial_state(target_questions),
+                                                seed=f"growth-{seed}-{number}-{attempt}-{nonce}")
+                    answer_rows = []
+                    while not engine.is_complete():
+                        public = engine.next_question()
+                        question = question_by_id[public["id"]]
+                        ability = person["dimension_abilities"][question["dimension"]]
+                        if question["type"] in {"single_choice", "true_false"}:
+                            correct = rng.random() < success_probability(ability, int(question["difficulty"])) * (1 - person["carelessness"])
+                            answer = question["answer"] if correct else rng.choice([option for option in question["options"] if option != question["answer"]])
+                            open_score = None
+                        else:
+                            answer, _ = human_like_open_answer(question, person, rng)
+                            open_score = scorer._rubric_score(question, answer)
+                            open_score["model"] = "synthetic-demo-rubric"
+                        elapsed = elapsed_seconds(question, person, rng)
+                        result = engine.submit_answer(question["id"], answer, elapsed, open_score)
+                        answer_rows.append((result, answer, elapsed))
+                    signature = "|".join(engine.state["used_ids"])
+                    if signature not in signatures:
+                        signatures.add(signature)
+                        break
+                    nonce += 1
+                    if nonce > 20:
+                        raise RuntimeError(f"无法为 {user_id} 第 {attempt} 次测评生成不同题目组合")
+                started = base_time + timedelta(days=attempt - 1, minutes=number)
+                completed_at = started + timedelta(minutes=30 + attempt % 15)
+                connection.execute(
+                    """INSERT INTO tests(id,user_id,status,target_questions,state_json,started_at,completed_at,data_source,source_note)
+                       VALUES (?,?,'completed',?,?,?,?, 'synthetic_demo',?)""",
+                    (test_id, user_id, target_questions, json.dumps(engine.state, ensure_ascii=False),
+                     started.isoformat(), completed_at.isoformat(), f"growth_attempt={attempt};synthetic_demo=true;seed={seed}"),
+                )
+                for result, answer, elapsed in answer_rows:
+                    connection.execute(
+                        """INSERT INTO answers(test_id,question_id,dimension,question_type,difficulty,answer_text,
+                           score,max_score,elapsed_seconds,feedback_json,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                        (test_id, result["question_id"], result["dimension"], result["question_type"], result["difficulty"],
+                         answer, result["score"], result["max_score"], elapsed,
+                         json.dumps(result.get("feedback", {}), ensure_ascii=False), completed_at.isoformat()),
+                    )
+                inserted_tests += 1
+                inserted_answers += len(answer_rows)
+    with db.connection() as connection:
+        counts = connection.execute(
+            """SELECT MIN(n) minimum,MAX(n) maximum FROM
+               (SELECT user_id,COUNT(*) n FROM tests WHERE data_source='synthetic_demo' AND status='completed' GROUP BY user_id)"""
+        ).fetchone()
+    return {"students": student_count, "attempts_per_student": attempts_per_student,
+        "inserted_tests": inserted_tests, "inserted_answers": inserted_answers,
+        "minimum_attempts": counts["minimum"], "maximum_attempts": counts["maximum"]}
+
+
+def seed_double_review_cases(minimum_cases: int = 24) -> dict:
+    """生成可追溯的双评演示记录；不冒充真实教师效度证据。"""
+    now = db.utc_now()
+    with db.connection() as connection:
+        rows = connection.execute(
+            """SELECT a.id,a.score,a.max_score,a.dimension FROM answers a
+               JOIN tests t ON t.id=a.test_id
+               WHERE t.data_source='synthetic_demo'
+               AND a.question_type IN ('open_text','practical','code','image','dialogue')
+               ORDER BY CASE WHEN t.source_note LIKE '%growth_attempt=50;%' THEN 0 ELSE 1 END,a.id DESC
+               LIMIT ?""", (minimum_cases,),
+        ).fetchall()
+        for index, row in enumerate(rows):
+            max_score = float(row["max_score"])
+            base = float(row["score"])
+            delta_a = (index % 3 - 1) * 0.05 * max_score
+            delta_b = ((index + 1) % 3 - 1) * 0.05 * max_score
+            if index % 6 == 0:
+                delta_a, delta_b = 0.12 * max_score, -0.12 * max_score
+            score_a = round(max(0, min(max_score, base + delta_a)) * 2) / 2
+            score_b = round(max(0, min(max_score, base + delta_b)) * 2) / 2
+            rubric = json.dumps({"data_source": "synthetic_demo", "purpose": "double_review_demo"}, ensure_ascii=False)
+            for reviewer, score in (("教师双评A", score_a), ("教师双评B", score_b)):
+                connection.execute(
+                    """INSERT INTO human_reviews(answer_id,reviewer,score,comment,rubric_json,created_at,updated_at)
+                       VALUES (?,?,?,?,?,?,?) ON CONFLICT(answer_id,reviewer) DO UPDATE SET
+                       score=excluded.score,comment=excluded.comment,rubric_json=excluded.rubric_json,updated_at=excluded.updated_at""",
+                    (row["id"], reviewer, score, "依据评分量表独立盲评，用于演示双评与一致性流程。", rubric, now, now),
+                )
+            if index < 4:
+                resolved = round(((score_a + score_b) / 2) * 2) / 2
+                connection.execute(
+                    """INSERT INTO review_resolutions(answer_id,resolved_score,resolver,note,created_at)
+                       VALUES (?,?,?,?,?) ON CONFLICT(answer_id) DO UPDATE SET resolved_score=excluded.resolved_score,
+                       resolver=excluded.resolver,note=excluded.note,created_at=excluded.created_at""",
+                    (row["id"], resolved, "教师裁决C", "双评演示裁决：综合两名教师评分与量表证据。", now),
+                )
+        paired = connection.execute(
+            """SELECT COUNT(*) FROM (SELECT answer_id FROM human_reviews GROUP BY answer_id HAVING COUNT(DISTINCT reviewer)>=2)"""
+        ).fetchone()[0]
+    return {"requested": minimum_cases, "double_reviewed_answers": paired, "seeded_cases": len(rows), "resolved_cases": min(4, len(rows))}
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Idempotently seed synthetic demo answer sheets")
     parser.add_argument("--count", type=int, default=100)
     parser.add_argument("--questions", type=int, default=25)
+    parser.add_argument("--attempts", type=int, default=50)
     args = parser.parse_args()
     print(seed_demo_responses(args.count, args.questions))
+    print(seed_growth_history(args.count, args.attempts, args.questions))
+    print(seed_double_review_cases())
     print(seed_demo_positions_and_applications())

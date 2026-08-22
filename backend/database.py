@@ -1025,13 +1025,25 @@ def question_statistics() -> list[dict[str, Any]]:
     return result
 
 
-def pending_review_answers() -> list[dict[str, Any]]:
+def pending_review_answer_count() -> int:
+    with connection() as db:
+        row = db.execute(
+            "SELECT COUNT(*) total FROM answers WHERE question_type IN ('open_text','practical','code','image','dialogue')"
+        ).fetchone()
+    return int(row["total"])
+
+
+def pending_review_answers(offset: int = 0, limit: int | None = None) -> list[dict[str, Any]]:
+    paging = " LIMIT ? OFFSET ?" if limit is not None else ""
+    params: tuple[Any, ...] = (max(1, limit), max(0, offset)) if limit is not None else ()
     with connection() as db:
         rows = db.execute(
             """SELECT a.*,u.name user_name,u.class_name,
                (SELECT COUNT(*) FROM human_reviews r WHERE r.answer_id=a.id) review_count
                FROM answers a JOIN tests t ON t.id=a.test_id JOIN users u ON u.id=t.user_id
-               WHERE a.question_type!='single_choice' ORDER BY a.created_at DESC"""
+               WHERE a.question_type IN ('open_text','practical','code','image','dialogue')
+               ORDER BY a.created_at DESC,a.id DESC""" + paging,
+            params,
         ).fetchall()
         reviews = db.execute("SELECT * FROM human_reviews ORDER BY answer_id,created_at").fetchall()
         resolutions = db.execute("SELECT * FROM review_resolutions").fetchall()
