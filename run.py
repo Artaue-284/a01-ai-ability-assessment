@@ -46,6 +46,21 @@ def local_urls() -> list[str]:
     return [f"http://{address}:8000" for address in sorted(addresses, key=lambda value: value == "127.0.0.1")]
 
 
+def configure_local_allowed_hosts() -> None:
+    """Allow local/LAN access plus the changing Cloudflare Quick Tunnel host.
+
+    A Quick Tunnel receives a new ``*.trycloudflare.com`` hostname on every
+    launch.  Keeping only yesterday's exact hostname makes the tunnel connect
+    successfully while FastAPI rejects every public request with HTTP 400.
+    Render starts uvicorn directly and therefore continues to use the exact
+    ``A01_ALLOWED_HOSTS`` value configured by the cloud service.
+    """
+    configured = [item.strip() for item in os.getenv("A01_ALLOWED_HOSTS", "").split(",") if item.strip()]
+    defaults = ["localhost", "127.0.0.1", socket.gethostname(), "*.trycloudflare.com"]
+    defaults.extend(url.removeprefix("http://").split(":", 1)[0] for url in local_urls())
+    os.environ["A01_ALLOWED_HOSTS"] = ",".join(dict.fromkeys([*configured, *defaults]))
+
+
 def open_browser_when_ready() -> None:
     url = "http://127.0.0.1:8000"
     # 本地就绪探测必须绕过系统代理：部分代理（如加速器）未放行 localhost，
@@ -62,6 +77,7 @@ def open_browser_when_ready() -> None:
 
 
 if __name__ == "__main__":
+    configure_local_allowed_hosts()
     if "--configure-tbox-both" in sys.argv:
         configure_tbox_both()
     if "--check" in sys.argv:
