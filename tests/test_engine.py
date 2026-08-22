@@ -20,11 +20,11 @@ class EngineTests(unittest.TestCase):
         bank = questions()
         stats = validate_question_bank(bank)
         self.assertTrue(stats["valid"], stats["errors"])
-        self.assertEqual(stats["total"], 300)
+        self.assertEqual(stats["total"], 301)
         self.assertTrue(all(q.get("ability_level") for q in bank))
         self.assertTrue(all(q.get("tags") for q in bank))
         self.assertTrue(all(len(q.get("explanation", "").strip()) >= 12 for q in bank))
-        self.assertEqual(len({q["explanation"] for q in bank}), 300)
+        self.assertEqual(len({q["explanation"] for q in bank}), 301)
         self.assertIn("review_completion", stats)
         for dimension in DIMENSIONS:
             self.assertGreaterEqual(stats["by_dimension"][dimension], 15)
@@ -56,7 +56,9 @@ class EngineTests(unittest.TestCase):
     def test_choice_lengths_and_answer_positions_are_balanced(self):
         objective = [item for item in questions() if item["type"] == "single_choice"]
         positions = Counter("ABCD"[item["options"].index(item["answer"])] for item in objective)
-        self.assertEqual(positions, Counter({"A": 45, "B": 45, "C": 45, "D": 45}))
+        self.assertEqual(sum(positions.values()), 181)
+        self.assertEqual(set(positions), set("ABCD"))
+        self.assertLessEqual(max(positions.values()) - min(positions.values()), 1)
         for item in objective:
             lengths = [len(option) for option in item["options"]]
             self.assertLessEqual(max(lengths) - min(lengths), 8, item["id"])

@@ -165,7 +165,7 @@ def slide_cover(prs):
              size=18, color=DARK, align=PP_ALIGN.CENTER)
     add_shape(s, MSO_SHAPE.ROUNDED_RECTANGLE, 3.4, 4.45, 6.53, 1.05, fill=CARD_BG, line=CARD_LINE)
     add_text(s, 3.55, 4.62, 6.23, 0.75,
-             ["版本 v1.5.0　题库 300 题　六维模型　单元测试 50 项全绿",
+             ["版本 v1.5.0　题库 301 题　六维模型　单元测试 63 项全绿",
               "A01 数字马力杯 · 技术方案演示"], size=13, color=MUTED, align=PP_ALIGN.CENTER, space_after=4)
     add_footer(s, 1)
 
@@ -214,7 +214,7 @@ def slide_architecture(prs):
         ("前端：原生 HTML/CSS/JS 单页", "Canvas 雷达图 · localStorage 状态 · 无构建依赖", PRIMARY_SOFT, PRIMARY),
         ("API 层：FastAPI", "测评/报告 · AI助手/对话 · 题库/复核 · 企业/岗位", CARD_BG, DARK),
         ("领域服务层", "自适应测评引擎 · LLM 评分适配 · 岗位匹配与匿名聚合", CARD_BG, DARK),
-        ("数据层：SQLite + JSON 种子", "assessment.db · 题库 300 题 · evidence 证据文件", CARD_BG, DARK),
+        ("数据层：SQLite + JSON 种子", "assessment.db · 题库 301 题 · evidence 证据文件", CARD_BG, DARK),
     ]
     y = 1.35
     for i, (t, b, fill, col) in enumerate(layers):
@@ -318,7 +318,7 @@ def slide_storage(prs):
     data = [
         ("数据", "存储位置", "说明"),
         ("测评记录", "SQLite", "用户/测评/答案/复核/版本"),
-        ("题库", "JSON 种子 + 库", "300 题 + 启停版本留痕"),
+        ("题库", "JSON 种子 + 库", "301 题 + 启停版本留痕"),
         ("证据文件", "data/evidence/", "图片/文本，存路径 + SHA256"),
         ("密钥", "环境变量/配置文件", "不写入代码与数据库"),
     ]
@@ -362,9 +362,9 @@ def slide_validation(prs):
     s = prs.slides.add_slide(prs.slide_layouts[6])
     add_title(s, "验证情况", "自动化测试 + 题库结构校验 + 仿真双评")
     metrics = [
-        ("50 项", "单元测试全绿", "引擎/评分/鉴权/岗位闭环/选项乱序回归"),
+        ("63 项", "单元测试全绿", "引擎/评分/鉴权/岗位/选项/多模态回归"),
         ("76 项", "API 冒烟回归通过", "测评全流程 + 管理端 + 企业端"),
-        ("300 题", "题库结构校验 valid", "每维 50 题，答案位置 A/B/C/D 各 45"),
+        ("301 题", "题库结构校验 valid", "基础认知 51 题，其余五维各 50 题"),
         ("0.932", "仿真模型-人工相关", "100 份样本 / 400 条评分（合成数据）"),
     ]
     for i, (num, t, b) in enumerate(metrics):
@@ -400,7 +400,7 @@ def slide_summary(prs):
     add_shape(s, MSO_SHAPE.ROUNDED_RECTANGLE, 0.7, 1.5, 5.85, 4.4, fill=CARD_BG, line=CARD_LINE)
     add_text(s, 0.95, 1.72, 5.35, 0.4, ["已完成"], size=16, color=PRIMARY, bold=True)
     add_text(s, 0.95, 2.2, 5.35, 3.4, [
-        "• 六维模型 + 300 题库 + 自适应引擎",
+        "• 六维模型 + 301 题库 + 自适应引擎",
         "• 真实大模型评分（ant-line/百宝箱）",
         "• 报告、成长档案、教师看板",
         "• 企业岗位匹配与匿名画像闭环",

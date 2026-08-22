@@ -28,7 +28,7 @@ class AdminApiTests(unittest.TestCase):
     def test_question_management_and_versions(self):
         response = self.client.get("/api/admin/questions", headers=self.headers)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["items"]), 300)
+        self.assertEqual(len(response.json()["items"]), 301)
         source = next(item for item in response.json()["items"] if item["id"] == "BA201")
         payload = {key: source.get(key) for key in (
             "id", "dimension", "difficulty", "type", "question", "options", "answer",
@@ -49,7 +49,7 @@ class AdminApiTests(unittest.TestCase):
         self.assertEqual(exported.status_code, 200)
         self.assertIn("text/csv", exported.headers["content-type"])
         bank = self.client.get("/api/admin/questions-export.json", headers=self.headers)
-        self.assertEqual(len(bank.json()["items"]), 300)
+        self.assertEqual(len(bank.json()["items"]), 301)
 
     def test_admin_students_list_for_growth_tracking(self):
         response = self.client.get("/api/admin/students", headers=self.headers)

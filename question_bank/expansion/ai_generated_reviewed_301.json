@@ -1,0 +1,29 @@
+[
+  {
+    "id": "AIBADCA422CD",
+    "dimension": "basic",
+    "difficulty": 1,
+    "type": "single_choice",
+    "question": "在人工智能的基础认知中，以下关于人工智能的描述哪一项是正确的？",
+    "options": [
+      "能够模拟和执行人类智能任务的计算机系统",
+      "具有自我意识和情感的数字化人类大脑",
+      "专门用于玩电子游戏的专用硬件设备",
+      "可以完全替代人类所有工作的通用机器人"
+    ],
+    "answer": "能够模拟和执行人类智能任务的计算机系统",
+    "explanation": "人工智能是指由计算机系统所表现出的智能行为，能够模拟和执行学习、推理、感知等人类智能任务。常见误解是将 AI 视为具有人类意识的实体，或认为它只能是特定硬件、能够完全替代人类。",
+    "tags": [
+      "AI基础",
+      "概念理解",
+      "AI生成-教师审核"
+    ],
+    "ability_level": "L2",
+    "discrimination": 1.0,
+    "max_score": 10,
+    "rubric": [],
+    "keywords": [],
+    "image_url": null,
+    "source": "ai_generated_teacher_reviewed"
+  }
+]

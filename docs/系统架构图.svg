@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+  <defs>
+    <style>
+      .title{font:700 34px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#111}
+      .layer{font:700 20px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#333}
+      .head{font:700 22px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#111}
+      .body{font:400 17px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#222}
+      .small{font:400 15px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#444}
+      .box{fill:#fff;stroke:#111;stroke-width:2.2}
+      .soft{fill:#f2f2f2;stroke:#111;stroke-width:2.2}
+      .external{fill:#fafafa;stroke:#111;stroke-width:2.2;stroke-dasharray:9 7}
+      .line{fill:none;stroke:#111;stroke-width:2.2}
+      .dash{fill:none;stroke:#555;stroke-width:2;stroke-dasharray:8 7}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1100" fill="#fff"/>
+  <text x="800" y="48" text-anchor="middle" class="title">AI 能力测评智能体系统架构图</text>
+
+  <!-- connectors are drawn first so that all nodes remain clean -->
+  <path class="line" d="M800 140 V180 H355 V210 M800 180 H800 V210 M800 180 H1245 V210"/>
+  <path class="line" marker-end="url(#arrow)" d="M355 290 V325 H800 V350"/>
+  <path class="line" marker-end="url(#arrow)" d="M800 290 V350"/>
+  <path class="line" marker-end="url(#arrow)" d="M1245 290 V325 H800 V350"/>
+  <path class="line" d="M800 430 V468 H260 V500 M800 468 H620 V500 M800 468 H980 V500 M800 468 H1340 V500"/>
+  <path class="line" d="M260 590 V625 H200 V660 M260 625 H500 V660"/>
+  <path class="line" d="M620 590 V625 H500 V660 M620 625 H800 V660"/>
+  <path class="line" d="M980 590 V625 H800 V660 M980 625 H1100 V660"/>
+  <path class="line" d="M1340 590 V625 H1100 V660 M1340 625 H1400 V660"/>
+  <path class="line" d="M200 760 V800 H220 V845 M500 760 V800 H610 V845 M800 760 V800 H1000 V845 M1100 760 V800 H1000 V845 M1400 760 V800 H1390 V845"/>
+  <path class="dash" marker-end="url(#arrow)" d="M800 660 V625 H1390 V845"/>
+
+  <!-- layer labels -->
+  <text x="36" y="285" transform="rotate(-90 36 285)" class="layer">用户层</text>
+  <text x="36" y="430" transform="rotate(-90 36 430)" class="layer">交互层</text>
+  <text x="36" y="590" transform="rotate(-90 36 590)" class="layer">接口层</text>
+  <text x="36" y="760" transform="rotate(-90 36 760)" class="layer">核心能力层</text>
+  <text x="36" y="980" transform="rotate(-90 36 980)" class="layer">数据与外部服务层</text>
+
+  <!-- root -->
+  <rect class="soft" x="560" y="75" width="480" height="65" rx="3"/>
+  <text x="800" y="116" text-anchor="middle" class="head">A01 · AI 能力测评智能体</text>
+
+  <!-- users -->
+  <rect class="box" x="210" y="210" width="290" height="80" rx="3"/>
+  <text x="355" y="243" text-anchor="middle" class="head">学员</text>
+  <text x="355" y="272" text-anchor="middle" class="body">测评 · 报告 · 成长 · 投递</text>
+
+  <rect class="box" x="655" y="210" width="290" height="80" rx="3"/>
+  <text x="800" y="243" text-anchor="middle" class="head">教师 / 培训师</text>
+  <text x="800" y="272" text-anchor="middle" class="body">题库 · 复核 · 看板 · 追踪</text>
+
+  <rect class="box" x="1100" y="210" width="290" height="80" rx="3"/>
+  <text x="1245" y="243" text-anchor="middle" class="head">企业 / 用人单位</text>
+  <text x="1245" y="272" text-anchor="middle" class="body">岗位 · 匹配 · 投递管理</text>
+
+  <!-- frontend -->
+  <rect class="soft" x="500" y="350" width="600" height="80" rx="3"/>
+  <text x="800" y="383" text-anchor="middle" class="head">响应式单页应用</text>
+  <text x="800" y="413" text-anchor="middle" class="body">HTML / CSS / JavaScript · Canvas 图表 · 桌面与手机适配</text>
+
+  <!-- API layer -->
+  <rect class="box" x="110" y="500" width="300" height="90" rx="3"/>
+  <text x="260" y="535" text-anchor="middle" class="head">测评与报告 API</text>
+  <text x="260" y="565" text-anchor="middle" class="small">开始 · 答题 · 续答 · 报告</text>
+
+  <rect class="box" x="470" y="500" width="300" height="90" rx="3"/>
+  <text x="620" y="535" text-anchor="middle" class="head">AI 与证据 API</text>
+  <text x="620" y="565" text-anchor="middle" class="small">多轮对话 · 上传 · 多模态分析</text>
+
+  <rect class="box" x="830" y="500" width="300" height="90" rx="3"/>
+  <text x="980" y="535" text-anchor="middle" class="head">教学管理 API</text>
+  <text x="980" y="565" text-anchor="middle" class="small">题库 · 双评 · 账号 · 导出</text>
+
+  <rect class="box" x="1190" y="500" width="300" height="90" rx="3"/>
+  <text x="1340" y="535" text-anchor="middle" class="head">企业协作 API</text>
+  <text x="1340" y="565" text-anchor="middle" class="small">模板 · 岗位 · 投递 · 匹配</text>
+
+  <!-- core layer -->
+  <rect class="soft" x="75" y="660" width="250" height="100" rx="3"/>
+  <text x="200" y="696" text-anchor="middle" class="head">自适应测评引擎</text>
+  <text x="200" y="727" text-anchor="middle" class="small">分层抽题 · 同场去重</text>
+  <text x="200" y="749" text-anchor="middle" class="small">薄弱维度补测 · 提前停止</text>
+
+  <rect class="soft" x="375" y="660" width="250" height="100" rx="3"/>
+  <text x="500" y="696" text-anchor="middle" class="head">评分适配层</text>
+  <text x="500" y="727" text-anchor="middle" class="small">客观题规则评分</text>
+  <text x="500" y="749" text-anchor="middle" class="small">LLM 评分 · 规则兜底</text>
+
+  <rect class="soft" x="675" y="660" width="250" height="100" rx="3"/>
+  <text x="800" y="696" text-anchor="middle" class="head">多模态与实操 Agent</text>
+  <text x="800" y="727" text-anchor="middle" class="small">文档/数据提取 · 视觉接口</text>
+  <text x="800" y="749" text-anchor="middle" class="small">工具白名单 · 安全调用循环</text>
+
+  <rect class="soft" x="975" y="660" width="250" height="100" rx="3"/>
+  <text x="1100" y="696" text-anchor="middle" class="head">教研与成长服务</text>
+  <text x="1100" y="727" text-anchor="middle" class="small">双评裁决 · 题目统计</text>
+  <text x="1100" y="749" text-anchor="middle" class="small">综合/六维成长曲线</text>
+
+  <rect class="soft" x="1275" y="660" width="250" height="100" rx="3"/>
+  <text x="1400" y="696" text-anchor="middle" class="head">岗位匹配服务</text>
+  <text x="1400" y="727" text-anchor="middle" class="small">能力权重 · 门槛差距</text>
+  <text x="1400" y="749" text-anchor="middle" class="small">授权投递 · 隐私聚合</text>
+
+  <!-- data / external services -->
+  <rect class="box" x="75" y="845" width="290" height="135" rx="3"/>
+  <text x="220" y="883" text-anchor="middle" class="head">SQLite 业务数据库</text>
+  <text x="220" y="916" text-anchor="middle" class="small">用户 · 测评 · 答案 · 账号</text>
+  <text x="220" y="940" text-anchor="middle" class="small">复核 · 岗位 · 投递 · 对话</text>
+  <text x="220" y="964" text-anchor="middle" class="small">状态快照支持中断续答</text>
+
+  <rect class="box" x="465" y="845" width="290" height="135" rx="3"/>
+  <text x="610" y="883" text-anchor="middle" class="head">301 道结构化题库</text>
+  <text x="610" y="916" text-anchor="middle" class="small">六维 × 题型 × 难度</text>
+  <text x="610" y="940" text-anchor="middle" class="small">JSON 种子 + 数据库版本</text>
+  <text x="610" y="964" text-anchor="middle" class="small">启停、审核与版本追溯</text>
+
+  <rect class="box" x="855" y="845" width="290" height="135" rx="3"/>
+  <text x="1000" y="883" text-anchor="middle" class="head">证据文件存储</text>
+  <text x="1000" y="916" text-anchor="middle" class="small">图片 · PDF · 文本 · CSV</text>
+  <text x="1000" y="940" text-anchor="middle" class="small">类型/大小校验 · SHA-256</text>
+  <text x="1000" y="964" text-anchor="middle" class="small">路径与分析结果入库</text>
+
+  <rect class="external" x="1245" y="845" width="290" height="135" rx="3"/>
+  <text x="1390" y="883" text-anchor="middle" class="head">外部大模型服务</text>
+  <text x="1390" y="916" text-anchor="middle" class="small">ant-line · 百宝箱</text>
+  <text x="1390" y="940" text-anchor="middle" class="small">OpenAI 兼容接口</text>
+  <text x="1390" y="964" text-anchor="middle" class="small">超时/异常 → 本地规则兜底</text>
+
+  <!-- footer legend -->
+  <line x1="475" y1="1035" x2="535" y2="1035" class="line" marker-end="url(#arrow)"/>
+  <text x="550" y="1041" class="small">调用 / 数据流</text>
+  <line x1="745" y1="1035" x2="805" y2="1035" class="dash" marker-end="url(#arrow)"/>
+  <text x="820" y="1041" class="small">可选外部模型调用</text>
+  <text x="800" y="1080" text-anchor="middle" class="small">当前实现：FastAPI + 原生前端 + SQLite + 自适应引擎 + 可插拔 LLM 适配层</text>
+</svg>
